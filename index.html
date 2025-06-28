@@ -159,7 +159,7 @@
         const formatCurrency = (value) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
         const getTodayString = () => new Date().toISOString().split('T')[0];
 
-        // --- LOGIN & LOGOUT ---
+        // --- LOGIN & SESSION ---
         window.handleLogin = () => {
             const username = document.getElementById('username').value.toLowerCase();
             const password = document.getElementById('password').value;
@@ -168,6 +168,7 @@
 
             if (user && user.password === password) {
                 loggedInUser = { username: username, ...user };
+                sessionStorage.setItem('ffc_loggedInUser', JSON.stringify(loggedInUser)); // Simpan sesi
                 errorEl.textContent = '';
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
@@ -179,18 +180,29 @@
 
         window.handleLogout = () => {
             loggedInUser = null;
+            sessionStorage.removeItem('ffc_loggedInUser'); // Hapus sesi
             document.getElementById('login-screen').style.display = 'flex';
             document.getElementById('main-app').style.display = 'none';
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
         };
 
+        function checkSession() {
+            const savedUser = sessionStorage.getItem('ffc_loggedInUser');
+            if (savedUser) {
+                loggedInUser = JSON.parse(savedUser);
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                initApp();
+            }
+        }
+
         // --- LOCAL STORAGE FUNCTIONS ---
         function saveStateToLocalStorage() {
             const date = document.getElementById('reportDate').value;
             localStorage.setItem(`ffc_transactions_${date}`, JSON.stringify(completedTransactions));
             localStorage.setItem(`ffc_expenses_${date}`, JSON.stringify(expenses));
-            localStorage.setItem(`ffc_menuState_${date}`, JSON.stringify(menuState));
+            localStorage.setItem(`ffc_menuState`, JSON.stringify(menuState)); // Menu state is not date-specific
             localStorage.setItem(`ffc_transactionCounter_${date}`, transactionCounter);
         }
 
@@ -200,7 +212,7 @@
                 const savedTransactions = JSON.parse(localStorage.getItem(`ffc_transactions_${date}`) || '[]');
                 const savedExpenses = JSON.parse(localStorage.getItem(`ffc_expenses_${date}`) || '[]');
                 const savedCounter = parseInt(localStorage.getItem(`ffc_transactionCounter_${date}`) || '0', 10);
-                const savedMenuState = JSON.parse(localStorage.getItem(`ffc_menuState_${date}`));
+                const savedMenuState = JSON.parse(localStorage.getItem(`ffc_menuState`)); // Load general menu state
 
                 completedTransactions = savedTransactions;
                 expenses = savedExpenses;
@@ -479,7 +491,8 @@
             if (confirm(`Anda yakin ingin menghapus semua data untuk tanggal ${date}? Aksi ini tidak bisa dibatalkan.`)) {
                 localStorage.removeItem(`ffc_transactions_${date}`);
                 localStorage.removeItem(`ffc_expenses_${date}`);
-                localStorage.removeItem(`ffc_menuState_${date}`);
+                // Don't remove menu state on daily reset
+                // localStorage.removeItem(`ffc_menuState`); 
                 localStorage.removeItem(`ffc_transactionCounter_${date}`);
                 loadStateFromLocalStorage();
                 renderAll();
@@ -577,6 +590,10 @@
             loadStateFromLocalStorage();
             renderAll();
         }
+
+        window.onload = () => {
+            checkSession();
+        };
     </script>
 </body>
 </html>
