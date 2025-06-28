@@ -85,7 +85,16 @@
 
             <!-- KOLOM TENGAH: TRANSAKSI SAAT INI -->
             <section class="xl:col-span-1 flex flex-col gap-6">
-                <div class="card p-4"><h2 class="text-2xl font-bold text-red-700 mb-4">Transaksi Saat Ini</h2><div class="overflow-y-auto min-h-[200px] max-h-[400px] pr-2"><table class="w-full text-left"><tbody id="cart-table-body" class="divide-y divide-gray-200"></tbody></table></div><div class="border-t-2 border-dashed mt-4 pt-4"><div class="flex justify-between items-center font-bold text-xl mb-4"><span class="text-gray-800">Subtotal</span><span id="cart-subtotal">Rp 0</span></div><button onclick="saveTransaction()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>Simpan Transaksi</button></div></div>
+                <div class="card p-4"><h2 class="text-2xl font-bold text-red-700 mb-4">Transaksi Saat Ini</h2><div class="overflow-y-auto min-h-[200px] max-h-[400px] pr-2"><table class="w-full text-left"><tbody id="cart-table-body" class="divide-y divide-gray-200"></tbody></table></div><div class="border-t-2 border-dashed mt-4 pt-4"><div class="flex justify-between items-center font-bold text-xl mb-4"><span class="text-gray-800">Subtotal</span><span id="cart-subtotal">Rp 0</span></div>
+                <div class="mb-4">
+                    <span class="text-sm font-bold text-gray-700">Metode Pembayaran:</span>
+                    <div class="flex justify-around mt-2">
+                        <label class="flex items-center gap-2"><input type="radio" name="paymentMethod" value="Tunai" checked> Tunai</label>
+                        <label class="flex items-center gap-2"><input type="radio" name="paymentMethod" value="QRIS"> QRIS</label>
+                        <label class="flex items-center gap-2"><input type="radio" name="paymentMethod" value="Debit"> Debit</label>
+                    </div>
+                </div>
+                <button onclick="saveTransaction()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>Simpan Transaksi</button></div></div>
             </section>
 
             <!-- KOLOM KANAN: LAPORAN -->
@@ -126,7 +135,10 @@
     
     <!-- Template Laporan Shift (tersembunyi) -->
     <div id="shift-report-template" class="printable-area">
-        <div id="shift-report-content" style="padding: 20px; border: 1px solid #ccc;"><h1 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px;">Laporan Serah Terima Shift</h1><table style="width: 100%; margin-bottom: 20px; font-size: 14px;"><tr><td style="font-weight: bold;">Tanggal:</td><td id="report-date-val"></td><td style="font-weight: bold;">Nama Kasir:</td><td id="report-cashier-val"></td></tr></table><hr style="margin-bottom: 20px;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Ringkasan Keuangan</h2><table style="width: 50%; font-size: 14px; margin-bottom: 20px;"><tr><td>Pendapatan Kotor:</td><td id="report-gross-val" style="text-align: right;"></td></tr><tr><td>Total Pengeluaran:</td><td id="report-expense-val" style="text-align: right;"></td></tr><tr style="font-weight: bold; border-top: 1px solid #000;"><td>LABA BERSIH:</td><td id="report-net-val" style="text-align: right;"></td></tr></table><hr style="margin-bottom: 20px;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Produk Terlaris</h2><div id="report-bestsellers-val"></div><hr style="margin: 20px 0;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rincian Transaksi</h2><table id="report-transactions-table" style="width: 100%; border-collapse: collapse; font-size: 12px;"></table><hr style="margin: 20px 0;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rincian Pengeluaran</h2><table id="report-expenses-table" style="width: 100%; border-collapse: collapse; font-size: 12px;"></table><hr style="margin: 20px 0;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Laporan Sisa Stok</h2><table id="report-stock-table" style="width: 100%; border-collapse: collapse; font-size: 12px;"></table></div>
+        <div id="shift-report-content" style="padding: 20px; border: 1px solid #ccc;"><h1 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px;">Laporan Serah Terima Shift</h1><table style="width: 100%; margin-bottom: 20px; font-size: 14px;"><tr><td style="font-weight: bold;">Tanggal:</td><td id="report-date-val"></td><td style="font-weight: bold;">Nama Kasir:</td><td id="report-cashier-val"></td></tr></table><hr style="margin-bottom: 20px;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Ringkasan Keuangan</h2><table style="width: 50%; font-size: 14px; margin-bottom: 20px;"><tr><td>Pendapatan Kotor:</td><td id="report-gross-val" style="text-align: right;"></td></tr><tr><td>Total Pengeluaran:</td><td id="report-expense-val" style="text-align: right;"></td></tr><tr style="font-weight: bold; border-top: 1px solid #000;"><td>LABA BERSIH:</td><td id="report-net-val" style="text-align: right;"></td></tr></table>
+            <hr style="margin-bottom: 20px;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Ringkasan Pembayaran</h2>
+            <table id="report-payment-summary-table" style="width: 50%; font-size: 14px; margin-bottom: 20px;"></table>
+            <hr style="margin-bottom: 20px;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Produk Terlaris</h2><div id="report-bestsellers-val"></div><hr style="margin: 20px 0;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rincian Transaksi</h2><table id="report-transactions-table" style="width: 100%; border-collapse: collapse; font-size: 12px;"></table><hr style="margin: 20px 0;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rincian Pengeluaran</h2><table id="report-expenses-table" style="width: 100%; border-collapse: collapse; font-size: 12px;"></table><hr style="margin: 20px 0;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Laporan Sisa Stok</h2><table id="report-stock-table" style="width: 100%; border-collapse: collapse; font-size: 12px;"></table></div>
     </div>
 
     <script>
@@ -204,7 +216,7 @@
             const date = document.getElementById('reportDate').value;
             localStorage.setItem(`ffc_transactions_${date}`, JSON.stringify(completedTransactions));
             localStorage.setItem(`ffc_expenses_${date}`, JSON.stringify(expenses));
-            localStorage.setItem(`ffc_menuState`, JSON.stringify(menuState)); // Menu state is not date-specific
+            localStorage.setItem(`ffc_menuState`, JSON.stringify(menuState));
             localStorage.setItem(`ffc_transactionCounter_${date}`, transactionCounter);
         }
 
@@ -386,7 +398,8 @@
                 items: [...currentCart],
                 total: currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
                 timestamp: new Date().toISOString(),
-                cashier: loggedInUser.name
+                cashier: loggedInUser.name,
+                paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value
             };
             completedTransactions.push(newTransaction);
             saveStateToLocalStorage();
@@ -560,13 +573,25 @@
             document.getElementById('report-net-val').textContent = document.getElementById('finance-laba-bersih').textContent;
             document.getElementById('report-bestsellers-val').innerHTML = document.getElementById('best-sellers-container').innerHTML;
 
+            // Payment Summary
+            const paymentSummary = completedTransactions.reduce((acc, trx) => {
+                acc[trx.paymentMethod] = (acc[trx.paymentMethod] || 0) + trx.total;
+                return acc;
+            }, {});
+            const paymentTable = document.getElementById('report-payment-summary-table');
+            paymentTable.innerHTML = '';
+            for (const method in paymentSummary) {
+                const row = paymentTable.insertRow();
+                row.innerHTML = `<td>Total ${method}:</td><td style="text-align: right;">${formatCurrency(paymentSummary[method])}</td>`;
+            }
+
             const trxTable = document.getElementById('report-transactions-table');
-            trxTable.innerHTML = `<thead style="background-color: #eee; font-weight: bold;"><tr><td style="padding: 5px;">Waktu</td><td style="padding: 5px;">Item</td><td style="padding: 5px; text-align: right;">Total</td></tr></thead><tbody></tbody>`;
+            trxTable.innerHTML = `<thead style="background-color: #eee; font-weight: bold;"><tr><td style="padding: 5px;">Waktu</td><td style="padding: 5px;">Item</td><td style="padding: 5px;">Metode</td><td style="padding: 5px; text-align: right;">Total</td></tr></thead><tbody></tbody>`;
             const trxBody = trxTable.querySelector('tbody');
             completedTransactions.forEach(trx => {
                 const itemsString = trx.items.map(i => `${i.quantity}x ${i.name}`).join(', ');
                 const row = trxBody.insertRow();
-                row.innerHTML = `<td style="padding: 5px; border-bottom: 1px solid #ddd;">${new Date(trx.timestamp).toLocaleTimeString('id-ID')}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">${itemsString}</td><td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: right;">${formatCurrency(trx.total)}</td>`;
+                row.innerHTML = `<td style="padding: 5px; border-bottom: 1px solid #ddd;">${new Date(trx.timestamp).toLocaleTimeString('id-ID')}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">${itemsString}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">${trx.paymentMethod}</td><td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: right;">${formatCurrency(trx.total)}</td>`;
             });
 
             const expTable = document.getElementById('report-expenses-table');
@@ -602,7 +627,6 @@
 
         // --- INITIALIZATION ---
         function initApp() {
-            document.getElementById('loading-overlay').style.display = 'none';
             document.getElementById('cashier-name-display').textContent = loggedInUser.name;
             
             const reportDateInput = document.getElementById('reportDate');
