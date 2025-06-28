@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Kasir FFC - Super Admin</title>
+    <title>Aplikasi Kasir FFC - Versi Final</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -17,8 +17,7 @@
         .menu-button:hover:not(:disabled) { background-color: #D32F2F; color: #FFD60A; transform: scale(1.05); }
         .menu-button:disabled { background-color: #e5e7eb; color: #9ca3af; border-color: #d1d5db; cursor: not-allowed; }
         .qty-button { width: 28px; height: 28px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: background-color 0.2s; }
-        #menu-modal-overlay, #loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 50; display: flex; align-items: center; justify-content: center; }
-        #menu-modal-overlay { display: none; }
+        #menu-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 50; display: none; align-items: center; justify-content: center; }
         .printable-area { display: none; position: absolute; left: -9999px; background: white; color: black; }
         #receipt-template { width: 302px; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 12px; }
         #shift-report-template { width: 794px; padding: 40px; font-family: 'Arial', sans-serif; font-size: 12px; }
@@ -26,16 +25,8 @@
 </head>
 <body class="bg-gray-100">
 
-    <!-- LOADING SCREEN -->
-    <div id="loading-overlay">
-        <div class="text-center">
-            <svg class="animate-spin h-12 w-12 text-red-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <p id="loading-text" class="mt-4 text-lg font-semibold text-gray-700">Menghubungkan ke server FFC...</p>
-        </div>
-    </div>
-
     <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="min-h-screen items-center justify-center bg-yellow-50 hidden">
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-yellow-50">
         <div class="w-full max-w-sm p-8 space-y-6 bg-white rounded-xl shadow-lg">
             <div class="text-center">
                 <h1 class="font-anton text-4xl text-red-600">FARISAH FRIED CHICKEN</h1>
@@ -137,25 +128,16 @@
     <div id="shift-report-template" class="printable-area">
         <div id="shift-report-content" style="padding: 20px; border: 1px solid #ccc;"><h1 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px;">Laporan Serah Terima Shift</h1><table style="width: 100%; margin-bottom: 20px; font-size: 14px;"><tr><td style="font-weight: bold;">Tanggal:</td><td id="report-date-val"></td><td style="font-weight: bold;">Nama Kasir:</td><td id="report-cashier-val"></td></tr></table><hr style="margin-bottom: 20px;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Ringkasan Keuangan</h2><table style="width: 50%; font-size: 14px; margin-bottom: 20px;"><tr><td>Pendapatan Kotor:</td><td id="report-gross-val" style="text-align: right;"></td></tr><tr><td>Total Pengeluaran:</td><td id="report-expense-val" style="text-align: right;"></td></tr><tr style="font-weight: bold; border-top: 1px solid #000;"><td>LABA BERSIH:</td><td id="report-net-val" style="text-align: right;"></td></tr></table><hr style="margin-bottom: 20px;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Produk Terlaris</h2><div id="report-bestsellers-val"></div><hr style="margin: 20px 0;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rincian Transaksi</h2><table id="report-transactions-table" style="width: 100%; border-collapse: collapse; font-size: 12px;"></table><hr style="margin: 20px 0;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rincian Pengeluaran</h2><table id="report-expenses-table" style="width: 100%; border-collapse: collapse; font-size: 12px;"></table><hr style="margin: 20px 0;"><h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Laporan Sisa Stok</h2><table id="report-stock-table" style="width: 100%; border-collapse: collapse; font-size: 12px;"></table></div>
     </div>
-    
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, doc, updateDoc, deleteDoc, Timestamp, writeBatch, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    <script>
         // --- GLOBAL STATE ---
         let currentCart = [];
+        let completedTransactions = [];
+        let expenses = [];
+        let menuState = {};
         let loggedInUser = null;
-        let db;
-        let auth;
-        let transactionsUnsubscribe = null;
-        let expensesUnsubscribe = null;
-        let menuUnsubscribe = null;
-        let globalMenuState = {};
-        let globalTransactions = [];
-        let globalExpenses = [];
-        
+        let transactionCounter = 0;
+
         // --- USER DATABASE ---
         const users = {
             "siti": { password: "owner123", name: "Siti Fauziah", role: "owner" },
@@ -199,9 +181,6 @@
         window.handleLogout = () => {
             loggedInUser = null;
             sessionStorage.removeItem('ffc_loggedInUser');
-            if (transactionsUnsubscribe) transactionsUnsubscribe();
-            if (expensesUnsubscribe) expensesUnsubscribe();
-            if (menuUnsubscribe) menuUnsubscribe();
             document.getElementById('login-screen').style.display = 'flex';
             document.getElementById('main-app').style.display = 'none';
             document.getElementById('username').value = '';
@@ -221,7 +200,51 @@
             }
         }
 
+        // --- LOCAL STORAGE FUNCTIONS ---
+        function saveStateToLocalStorage() {
+            const date = document.getElementById('reportDate').value;
+            localStorage.setItem(`ffc_transactions_${date}`, JSON.stringify(completedTransactions));
+            localStorage.setItem(`ffc_expenses_${date}`, JSON.stringify(expenses));
+            localStorage.setItem(`ffc_menuState`, JSON.stringify(menuState)); // Menu state is not date-specific
+            localStorage.setItem(`ffc_transactionCounter_${date}`, transactionCounter);
+        }
+
+        function loadStateFromLocalStorage() {
+            const date = document.getElementById('reportDate').value;
+            try {
+                const savedTransactions = JSON.parse(localStorage.getItem(`ffc_transactions_${date}`) || '[]');
+                const savedExpenses = JSON.parse(localStorage.getItem(`ffc_expenses_${date}`) || '[]');
+                const savedCounter = parseInt(localStorage.getItem(`ffc_transactionCounter_${date}`) || '0', 10);
+                const savedMenuState = JSON.parse(localStorage.getItem(`ffc_menuState`));
+
+                completedTransactions = savedTransactions;
+                expenses = savedExpenses;
+                transactionCounter = savedCounter;
+                if (!savedMenuState) {
+                    menuState = JSON.parse(JSON.stringify(initialMenuData));
+                } else {
+                    menuState = savedMenuState;
+                }
+            } catch (e) {
+                console.error("Gagal memuat data:", e);
+                completedTransactions = [];
+                expenses = [];
+                transactionCounter = 0;
+                menuState = JSON.parse(JSON.stringify(initialMenuData));
+            }
+        }
+
         // --- RENDER FUNCTIONS ---
+        function renderAll() {
+            renderMenu();
+            renderCart();
+            renderExpenses();
+            renderTransactionHistory();
+            renderBestSellers();
+            calculateFinancialSummary();
+            applyRolePermissions();
+        }
+        
         function applyRolePermissions() {
             const isOwner = loggedInUser.role === 'owner';
             document.getElementById('manage-menu-btn').style.display = isOwner ? 'block' : 'none';
@@ -232,12 +255,12 @@
         function renderMenu() {
             const menuContainer = document.getElementById('menu-container');
             menuContainer.innerHTML = '';
-            for (const category in globalMenuState) {
+            for (const category in menuState) {
                 const categoryDiv = document.createElement('div');
                 categoryDiv.innerHTML = `<h3 class="text-lg font-bold text-red-700 mb-3">${category}</h3>`;
                 const gridDiv = document.createElement('div');
                 gridDiv.className = 'grid grid-cols-2 lg:grid-cols-2 gap-3';
-                globalMenuState[category].forEach(item => {
+                menuState[category].forEach(item => {
                     const button = document.createElement('button');
                     button.className = 'menu-button';
                     button.onclick = () => addItemToCart(item.name, item.price);
@@ -275,7 +298,7 @@
         function renderExpenses() {
             const tableBody = document.getElementById('expense-table-body');
             tableBody.innerHTML = '';
-            globalExpenses.forEach((expense) => {
+            expenses.forEach((expense) => {
                 const row = tableBody.insertRow();
                 row.innerHTML = `
                     <td class="py-1 pr-1"><input type="text" value="${expense.name}" onchange="updateExpense('${expense.id}', 'name', this.value)" class="w-full p-2 border rounded-md" placeholder="Keterangan Biaya"></td>
@@ -288,16 +311,16 @@
         function renderTransactionHistory() {
             const historyContainer = document.getElementById('transaction-history');
             historyContainer.innerHTML = '';
-            if (globalTransactions.length === 0) {
+            if (completedTransactions.length === 0) {
                  historyContainer.innerHTML = `<p class="text-center py-8 text-gray-400 font-semibold">Belum ada transaksi</p>`;
                  return;
             }
-            globalTransactions.slice().reverse().forEach(trx => {
+            completedTransactions.slice().reverse().forEach(trx => {
                 const trxDiv = document.createElement('div');
                 trxDiv.className = 'bg-white p-2 rounded-md border text-sm flex justify-between items-center';
-                const timestamp = trx.timestamp.toDate ? trx.timestamp.toDate() : new Date(trx.timestamp);
+                const timestamp = new Date(trx.timestamp);
                 trxDiv.innerHTML = `
-                    <div><span class="font-bold text-gray-700">Transaksi #${trx.trxId}</span><span class="block text-xs text-gray-500">${timestamp.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} - Kasir: <strong>${trx.cashier || 'N/A'}</strong></span></div>
+                    <div><span class="font-bold text-gray-700">Transaksi #${trx.id}</span><span class="block text-xs text-gray-500">${timestamp.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} - Kasir: <strong>${trx.cashier || 'N/A'}</strong></span></div>
                     <div class="text-right"><span class="font-bold text-green-700">${formatCurrency(trx.total)}</span><button onclick="generateReceipt('${trx.id}')" class="block text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full mt-1 hover:bg-blue-600">Cetak Struk</button></div>
                 `;
                 historyContainer.appendChild(trxDiv);
@@ -308,7 +331,7 @@
             const container = document.getElementById('best-sellers-container');
             container.innerHTML = '';
             const salesCount = {};
-            globalTransactions.forEach(trx => {
+            completedTransactions.forEach(trx => {
                 trx.items.forEach(item => {
                     salesCount[item.name] = (salesCount[item.name] || 0) + item.quantity;
                 });
@@ -335,8 +358,8 @@
         }
 
         function calculateFinancialSummary() {
-            const totalPendapatan = globalTransactions.reduce((sum, trx) => sum + trx.total, 0);
-            const totalPengeluaran = globalExpenses.reduce((sum, exp) => sum + (parseFloat(exp.amount) || 0), 0);
+            const totalPendapatan = completedTransactions.reduce((sum, trx) => sum + trx.total, 0);
+            const totalPengeluaran = expenses.reduce((sum, exp) => sum + (parseFloat(exp.amount) || 0), 0);
             const labaBersih = totalPendapatan - totalPengeluaran;
             document.getElementById('finance-pendapatan-kotor').textContent = formatCurrency(totalPendapatan);
             document.getElementById('finance-total-pengeluaran').textContent = `(${formatCurrency(totalPengeluaran)})`;
@@ -345,121 +368,60 @@
             labaElement.classList.toggle('text-red-400', labaBersih < 0);
             labaElement.classList.toggle('text-green-400', labaBersih >= 0);
         }
-        
-        // --- Firestore Logic ---
-        function listenToData(dateString) {
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'ffc-kasir-app';
-            
-            if (transactionsUnsubscribe) transactionsUnsubscribe();
-            if (expensesUnsubscribe) expensesUnsubscribe();
-            if (menuUnsubscribe) menuUnsubscribe();
 
-            const menuRef = doc(db, `/artifacts/${appId}/public/data/menu`, 'liveMenu');
-            menuUnsubscribe = onSnapshot(menuRef, (doc) => {
-                globalMenuState = doc.exists() ? doc.data() : JSON.parse(JSON.stringify(initialMenuData));
-                renderMenu();
-            }, (error) => console.error("Error listening to menu:", error));
-
-            const trxQuery = query(collection(db, `/artifacts/${appId}/public/data/transactions`), where("date", "==", dateString));
-            transactionsUnsubscribe = onSnapshot(trxQuery, (snapshot) => {
-                globalTransactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderTransactionHistory();
-                renderBestSellers();
-                calculateFinancialSummary();
-            }, (error) => console.error("Error listening to transactions:", error));
-
-            const expQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), where("date", "==", dateString));
-            expensesUnsubscribe = onSnapshot(expQuery, (snapshot) => {
-                globalExpenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderExpenses();
-                calculateFinancialSummary();
-            }, (error) => console.error("Error listening to expenses:", error));
-        }
-
-        async function saveTransaction() {
+        // --- DATA HANDLING LOGIC (OFFLINE) ---
+        function saveTransaction() {
             if (currentCart.length === 0) return;
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'ffc-kasir-app';
             
-            // Get the latest transaction counter for the day
-            const counterRef = doc(db, `/artifacts/${appId}/public/data/counters`, getTodayString());
-            const counterSnap = await getDoc(counterRef);
-            const currentCount = counterSnap.exists() ? counterSnap.data().count : 0;
-            const newCount = currentCount + 1;
-
-            const newTransaction = {
-                trxId: newCount,
-                items: [...currentCart],
-                total: currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-                timestamp: Timestamp.now(),
-                date: getTodayString(),
-                cashier: loggedInUser.name
-            };
-
-            const batch = writeBatch(db);
-            
-            // 1. Add new transaction
-            const trxRef = doc(collection(db, `/artifacts/${appId}/public/data/transactions`));
-            batch.set(trxRef, newTransaction);
-            
-            // 2. Update stock for each item in the cart
-            const menuRef = doc(db, `/artifacts/${appId}/public/data/menu`, 'liveMenu');
-            const updatedMenuState = JSON.parse(JSON.stringify(globalMenuState));
+            // Update stock state before saving
             currentCart.forEach(cartItem => {
-                for (const category in updatedMenuState) {
-                    const itemInMenu = updatedMenuState[category].find(item => item.name === cartItem.name);
-                    if (itemInMenu) {
-                        itemInMenu.stock -= cartItem.quantity;
-                        break;
-                    }
+                const menuItem = findMenuItem(cartItem.name);
+                if (menuItem) {
+                    menuItem.stock -= cartItem.quantity;
                 }
             });
-            batch.set(menuRef, updatedMenuState);
 
-            // 3. Update the transaction counter
-            batch.set(counterRef, { count: newCount });
-
-            try {
-                await batch.commit();
-                currentCart = [];
-                renderCart();
-            } catch (e) {
-                console.error("Error saving transaction batch:", e);
-                alert("Gagal menyimpan transaksi. Cek koneksi internet Anda.");
-            }
+            transactionCounter++;
+            const newTransaction = {
+                id: transactionCounter,
+                items: [...currentCart],
+                total: currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                timestamp: new Date().toISOString(),
+                cashier: loggedInUser.name
+            };
+            completedTransactions.push(newTransaction);
+            saveStateToLocalStorage();
+            renderAll();
+            currentCart = [];
+            renderCart();
         }
         
-        async function addExpenseRow() {
-             const appId = typeof __app_id !== 'undefined' ? __app_id : 'ffc-kasir-app';
-            try {
-                await addDoc(collection(db, `/artifacts/${appId}/public/data/expenses`), {
-                    name: 'Biaya Baru',
-                    amount: 0,
-                    date: getTodayString(),
-                    cashier: loggedInUser.name
-                });
-            } catch (e) { console.error("Error adding expense: ", e); }
+        function addExpenseRow() {
+            const newExpense = { id: `exp_${Date.now()}`, name: 'Biaya Baru', amount: 0 };
+            expenses.push(newExpense);
+            saveStateToLocalStorage();
+            renderExpenses();
         }
 
-        async function updateExpense(docId, field, value) {
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'ffc-kasir-app';
-            const docRef = doc(db, `/artifacts/${appId}/public/data/expenses`, docId);
-            const updatedData = {};
-            updatedData[field] = (field === 'amount') ? parseFloat(value) || 0 : value;
-            try { await updateDoc(docRef, updatedData); } 
-            catch (e) { console.error("Error updating expense: ", e); }
+        function updateExpense(docId, field, value) {
+            const expense = expenses.find(e => e.id === docId);
+            if (expense) {
+                expense[field] = (field === 'amount') ? parseFloat(value) || 0 : value;
+                saveStateToLocalStorage();
+                calculateFinancialSummary();
+            }
         }
 
-        async function removeExpense(docId) {
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'ffc-kasir-app';
-            const docRef = doc(db, `/artifacts/${appId}/public/data/expenses`, docId);
-            try { await deleteDoc(docRef); } 
-            catch (e) { console.error("Error removing expense: ", e); }
+        function removeExpense(docId) {
+            expenses = expenses.filter(e => e.id !== docId);
+            saveStateToLocalStorage();
+            renderExpenses();
         }
 
         // --- CART & STOCK LOGIC (Local) ---
         function findMenuItem(name) {
-            for (const category in globalMenuState) {
-                const item = globalMenuState[category].find(i => i.name === name);
+            for (const category in menuState) {
+                const item = menuState[category].find(i => i.name === name);
                 if (item) return item;
             }
             return null;
@@ -467,19 +429,37 @@
 
         window.addItemToCart = (name, price) => {
             const menuItem = findMenuItem(name);
-            if (!menuItem || menuItem.stock <= 0) return;
-            const existingItemInCart = currentCart.find(item => item.name === name);
-            if (existingItemInCart) { existingItemInCart.quantity++; } 
-            else { currentCart.push({ name, price, quantity: 1 }); }
+            const itemInCart = currentCart.find(item => item.name === name);
+            const currentQtyInCart = itemInCart ? itemInCart.quantity : 0;
+            
+            if (menuItem.stock - currentQtyInCart <= 0) {
+                alert(`Stok ${name} tidak mencukupi.`);
+                return;
+            }
+
+            if (itemInCart) {
+                itemInCart.quantity++;
+            } else {
+                currentCart.push({ name, price, quantity: 1 });
+            }
             renderCart();
         }
 
         window.updateQuantity = (name, change) => {
             const itemIndex = currentCart.findIndex(item => item.name === name);
             if (itemIndex === -1) return;
-            currentCart[itemIndex].quantity += change;
-            if (currentCart[itemIndex].quantity <= 0) {
+            
+            let newQty = currentCart[itemIndex].quantity + change;
+            
+            if (newQty > findMenuItem(name).stock) {
+                alert(`Stok ${name} tidak mencukupi.`);
+                return;
+            }
+
+            if (newQty <= 0) {
                 currentCart.splice(itemIndex, 1);
+            } else {
+                currentCart[itemIndex].quantity = newQty;
             }
             renderCart();
         }
@@ -488,12 +468,12 @@
         window.openMenuModal = () => {
             const listContainer = document.getElementById('menu-management-list');
             listContainer.innerHTML = '';
-            for (const category in globalMenuState) {
+            for (const category in menuState) {
                 const categoryTitle = document.createElement('h4');
                 categoryTitle.className = 'text-md font-bold text-red-700 border-b pb-1';
                 categoryTitle.textContent = category;
                 listContainer.appendChild(categoryTitle);
-                globalMenuState[category].forEach(item => {
+                menuState[category].forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'grid grid-cols-3 gap-4 items-center';
                     itemDiv.innerHTML = `
@@ -511,11 +491,7 @@
             document.getElementById('menu-modal-overlay').style.display = 'none';
         }
 
-        window.saveMenuChanges = async () => {
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'ffc-kasir-app';
-            const menuRef = doc(db, `/artifacts/${appId}/public/data/menu`, 'liveMenu');
-            const newMenuState = JSON.parse(JSON.stringify(globalMenuState));
-
+        window.saveMenuChanges = () => {
             const inputs = document.querySelectorAll('#menu-management-list input');
             inputs.forEach(input => {
                 const itemName = input.dataset.name;
@@ -523,57 +499,33 @@
                 const inputType = input.dataset.type;
                 const newValue = parseInt(input.value, 10);
                 
-                const itemIndex = newMenuState[category].findIndex(i => i.name === itemName);
+                const itemIndex = menuState[category].findIndex(i => i.name === itemName);
                 if (itemIndex > -1) {
-                    newMenuState[category][itemIndex][inputType] = isNaN(newValue) ? 0 : newValue;
+                    menuState[category][itemIndex][inputType] = isNaN(newValue) ? 0 : newValue;
                 }
             });
-            
-            try {
-                await setDoc(menuRef, newMenuState);
-                closeMenuModal();
-            } catch(e) {
-                console.error("Error saving menu changes:", e);
-                alert("Gagal menyimpan perubahan menu.");
-            }
+            saveStateToLocalStorage();
+            renderMenu();
+            closeMenuModal();
         }
 
-        window.resetDailyData = async () => {
+        window.resetDailyData = () => {
             const date = document.getElementById('reportDate').value;
-            if (confirm(`ANDA YAKIN ingin menghapus semua data untuk tanggal ${date}? Aksi ini tidak bisa dibatalkan.`)) {
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'ffc-kasir-app';
-                const batch = writeBatch(db);
-                
-                // Hapus transaksi
-                const trxQuery = query(collection(db, `/artifacts/${appId}/public/data/transactions`), where("date", "==", date));
-                const trxSnapshot = await getDocs(trxQuery);
-                trxSnapshot.forEach(doc => batch.delete(doc.ref));
-
-                // Hapus pengeluaran
-                const expQuery = query(collection(db, `/artifacts/${appId}/public/data/expenses`), where("date", "==", date));
-                const expSnapshot = await getDocs(expQuery);
-                expSnapshot.forEach(doc => batch.delete(doc.ref));
-
-                // Reset counter
-                const counterRef = doc(db, `/artifacts/${appId}/public/data/counters`, date);
-                batch.set(counterRef, { count: 0 });
-
-                try {
-                    await batch.commit();
-                    alert(`Data untuk tanggal ${date} berhasil direset.`);
-                } catch (e) {
-                    console.error("Error resetting data:", e);
-                    alert("Gagal mereset data.");
-                }
+            if (confirm(`Anda yakin ingin menghapus semua data untuk tanggal ${date}? Aksi ini tidak bisa dibatalkan.`)) {
+                localStorage.removeItem(`ffc_transactions_${date}`);
+                localStorage.removeItem(`ffc_expenses_${date}`);
+                localStorage.removeItem(`ffc_transactionCounter_${date}`);
+                loadStateFromLocalStorage();
+                renderAll();
             }
         }
 
         window.generateReceipt = (transactionId) => {
             const { jsPDF } = window.jspdf;
-            const trx = globalTransactions.find(t => t.id == transactionId);
+            const trx = completedTransactions.find(t => t.id == transactionId);
             if (!trx) return;
-            const timestamp = trx.timestamp.toDate();
-            document.getElementById('receipt-id').textContent = trx.trxId;
+            const timestamp = new Date(trx.timestamp);
+            document.getElementById('receipt-id').textContent = trx.id;
             document.getElementById('receipt-date').textContent = timestamp.toLocaleString('id-ID');
             document.getElementById('receipt-cashier').textContent = trx.cashier || 'N/A';
             const itemsTable = document.getElementById('receipt-items');
@@ -589,7 +541,7 @@
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, canvas.height * 80 / canvas.width] });
                 pdf.addImage(imgData, 'PNG', 0, 0, 80, canvas.height * 80 / canvas.width);
-                pdf.save(`struk-ffc-${trx.trxId}.pdf`);
+                pdf.save(`struk-ffc-${trx.id}.pdf`);
                 receiptElement.style.display = 'none';
             });
         }
@@ -608,16 +560,16 @@
             const trxTable = document.getElementById('report-transactions-table');
             trxTable.innerHTML = `<thead style="background-color: #eee; font-weight: bold;"><tr><td style="padding: 5px;">Waktu</td><td style="padding: 5px;">Item</td><td style="padding: 5px; text-align: right;">Total</td></tr></thead><tbody></tbody>`;
             const trxBody = trxTable.querySelector('tbody');
-            globalTransactions.forEach(trx => {
+            completedTransactions.forEach(trx => {
                 const itemsString = trx.items.map(i => `${i.quantity}x ${i.name}`).join(', ');
                 const row = trxBody.insertRow();
-                row.innerHTML = `<td style="padding: 5px; border-bottom: 1px solid #ddd;">${trx.timestamp.toDate().toLocaleTimeString('id-ID')}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">${itemsString}</td><td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: right;">${formatCurrency(trx.total)}</td>`;
+                row.innerHTML = `<td style="padding: 5px; border-bottom: 1px solid #ddd;">${new Date(trx.timestamp).toLocaleTimeString('id-ID')}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">${itemsString}</td><td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: right;">${formatCurrency(trx.total)}</td>`;
             });
 
             const expTable = document.getElementById('report-expenses-table');
             expTable.innerHTML = `<thead style="background-color: #eee; font-weight: bold;"><tr><td style="padding: 5px;">Keterangan</td><td style="padding: 5px; text-align: right;">Nominal</td></tr></thead><tbody></tbody>`;
             const expBody = expTable.querySelector('tbody');
-            globalExpenses.forEach(exp => {
+            expenses.forEach(exp => {
                 const row = expBody.insertRow();
                 row.innerHTML = `<td style="padding: 5px; border-bottom: 1px solid #ddd;">${exp.name}</td><td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: right;">${formatCurrency(exp.amount)}</td>`;
             });
@@ -625,8 +577,8 @@
             const stockTable = document.getElementById('report-stock-table');
             stockTable.innerHTML = `<thead style="background-color: #eee; font-weight: bold;"><tr><td style="padding: 5px;">Kategori</td><td style="padding: 5px;">Nama Produk</td><td style="padding: 5px; text-align: right;">Sisa Stok</td></tr></thead><tbody></tbody>`;
             const stockBody = stockTable.querySelector('tbody');
-            for (const category in globalMenuState) {
-                globalMenuState[category].forEach(item => {
+            for (const category in menuState) {
+                menuState[category].forEach(item => {
                     const row = stockBody.insertRow();
                     row.innerHTML = `<td style="padding: 5px; border-bottom: 1px solid #ddd;">${category}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">${item.name}</td><td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: right;">${item.stock}</td>`;
                 });
@@ -646,40 +598,23 @@
         };
 
         // --- INITIALIZATION ---
-        async function initFirebase() {
-            const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-            if (firebaseConfigStr === '{}' || !firebaseConfigStr) {
-                alert("Konfigurasi server tidak ditemukan. Aplikasi tidak dapat berjalan online.");
-                document.getElementById('loading-overlay').style.display = 'none';
-                return;
-            }
-            
-            try {
-                const firebaseConfig = JSON.parse(firebaseConfigStr);
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                await signInAnonymously(auth);
-                checkSession();
-            } catch (error) {
-                console.error("Gagal inisialisasi Firebase:", error);
-                alert("Gagal terhubung ke server. Coba refresh halaman.");
-            }
-        }
-
         function initApp() {
+            document.getElementById('loading-overlay').style.display = 'none';
             document.getElementById('cashier-name-display').textContent = loggedInUser.name;
+            
             const reportDateInput = document.getElementById('reportDate');
             reportDateInput.value = getTodayString();
-            reportDateInput.addEventListener('change', (e) => {
-                listenToData(e.target.value);
+            reportDateInput.addEventListener('change', () => {
+                loadStateFromLocalStorage();
+                renderAll();
             });
-            listenToData(getTodayString());
-            applyRolePermissions();
+            
+            loadStateFromLocalStorage();
+            renderAll();
         }
 
         window.onload = () => {
-            initFirebase();
+            checkSession();
         };
     </script>
 </body>
