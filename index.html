@@ -195,7 +195,6 @@
                 document.getElementById('main-app').style.display = 'block';
                 initApp();
             } else {
-                document.getElementById('loading-overlay').style.display = 'none';
                 document.getElementById('login-screen').style.display = 'flex';
             }
         }
@@ -220,7 +219,7 @@
                 completedTransactions = savedTransactions;
                 expenses = savedExpenses;
                 transactionCounter = savedCounter;
-                if (!savedMenuState) {
+                if (!savedMenuState || Object.keys(savedMenuState).length === 0) {
                     menuState = JSON.parse(JSON.stringify(initialMenuData));
                 } else {
                     menuState = savedMenuState;
@@ -451,7 +450,11 @@
             
             let newQty = currentCart[itemIndex].quantity + change;
             
-            if (newQty > findMenuItem(name).stock) {
+            const menuItem = findMenuItem(name);
+            const qtyInCartForThisItem = currentCart.filter(i => i.name === name).reduce((sum, i) => sum + i.quantity, 0);
+            const qtyNotInThisCartStack = qtyInCartForThisItem - currentCart[itemIndex].quantity;
+
+            if (change > 0 && (qtyNotInThisCartStack + newQty) > menuItem.stock) {
                 alert(`Stok ${name} tidak mencukupi.`);
                 return;
             }
