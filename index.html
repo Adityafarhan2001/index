@@ -73,7 +73,7 @@
         <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Tampilan Dapur (KDS)</h1><div id="kds-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div></div>
     </template>
     <template id="reports-page">
-        <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Laporan</h1><div class="card p-4"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-white">Laporan Harian</h2><div class="flex gap-2"><input type="date" id="report-page-date" class="p-2 border rounded-lg bg-gray-700 border-gray-600 text-white shadow-sm"><button onclick="generateShiftReport()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">PDF</button><button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">Excel</button></div></div></div></div>
+        <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Laporan</h1><div class="card p-4"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-white">Laporan Harian</h2><div class="flex gap-2"><input type="date" id="report-page-date" class="p-2 border rounded-lg bg-gray-700 border-gray-600 text-white shadow-sm"><button onclick="generateShiftReport()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">PDF</button><button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">Excel</button></div></div><div class="border-t border-gray-700 mt-6 pt-4"><h2 class="text-xl font-bold text-white mb-4">Kirim Laporan ke Owner</h2><div class="flex gap-4"><button onclick="sendViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2"><span>WhatsApp</span></button><button onclick="sendViaEmail()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2"><span>Email</span></button></div></div></div></div>
     </template>
     <template id="settings-page">
         <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Pengaturan</h1><div class="card p-4"><h2 class="text-xl font-bold text-white mb-4">Kelola Menu, Harga & Stok</h2><div id="menu-management-list" class="space-y-4"></div><div class="mt-6 flex justify-end"><button onclick="saveMenuChanges()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold">Simpan Perubahan Menu</button></div></div><div class="card p-4"><h2 class="text-xl font-bold text-white mb-4">Tindakan Berbahaya</h2><button id="reset-data-btn" onclick="resetDailyData()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">Reset Data Hari Ini</button></div></div>
@@ -108,8 +108,8 @@
         let kdsInterval;
 
         const users = {
-            "siti": { password: "owner123", name: "Siti Fauziah", role: "owner", branch: "All" },
-            "aditya": { password: "owner123", name: "Aditya Farhan", role: "owner", branch: "All" },
+            "siti": { password: "owner123", name: "Siti Fauziah", role: "owner", phone: "6285888593080", email: "owner@ffc.com" },
+            "aditya": { password: "owner123", name: "Aditya Farhan", role: "owner", phone: "6285888593080", email: "owner@ffc.com" },
             "ratih": { password: "karyawan123", name: "Ratih", role: "karyawan", branch: "FFC Cabang 1" },
             "lita": { password: "karyawan123", name: "Lita", role: "karyawan", branch: "FFC Cabang 2" },
             "aura": { password: "karyawan123", name: "Aura", role: "karyawan", branch: "FFC Cabang 3" },
@@ -558,7 +558,7 @@
             }
             document.getElementById('cart-total').textContent = formatCurrency(total);
         }
-        
+
         // --- DATA HANDLING LOGIC (OFFLINE) ---
         function saveTransaction() {
             if (currentCart.items.length === 0) return;
@@ -742,21 +742,228 @@
         };
 
         window.generateReceipt = (transactionId) => {
+            const { jsPDF } = window.jspdf;
             const date = getTodayString();
             const branch = loggedInUser.branch === 'All' ? activeBranch : loggedInUser.branch;
             const { transactions } = loadDataForBranch(branch, date);
             const trx = transactions.find(t => t.id == transactionId);
             if (!trx) return;
-            // ... (rest of PDF generation logic)
+            const timestamp = new Date(trx.timestamp);
+            document.getElementById('receipt-id').textContent = trx.id;
+            document.getElementById('receipt-date').textContent = timestamp.toLocaleString('id-ID');
+            document.getElementById('receipt-cashier').textContent = trx.cashier || 'N/A';
+            const itemsTable = document.getElementById('receipt-items');
+            itemsTable.innerHTML = '';
+            trx.items.forEach(item => {
+                const row = itemsTable.insertRow();
+                row.innerHTML = `<td class="text-left" colspan="2">${item.name}</td><tr></tr><td class="text-left">${item.quantity}x ${formatCurrency(item.price)}</td><td class="text-right">${formatCurrency(item.quantity * item.price)}</td>`;
+            });
+            const subtotal = trx.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            let discountAmount = 0;
+            if (trx.discount.type === 'percent') {
+                discountAmount = subtotal * (trx.discount.value / 100);
+            } else {
+                discountAmount = trx.discount.value;
+            }
+
+            const summaryDiv = document.getElementById('receipt-summary');
+            summaryDiv.innerHTML = `<div class="text-right">Subtotal: ${formatCurrency(subtotal)}</div>`;
+            if(discountAmount > 0) {
+                 summaryDiv.innerHTML += `<div class="text-right">Diskon: -${formatCurrency(discountAmount)}</div>`;
+            }
+            summaryDiv.innerHTML += `<div class="text-right font-bold">TOTAL: ${formatCurrency(trx.total)}</div>`;
+
+            const receiptElement = document.getElementById('receipt-template');
+            receiptElement.style.display = 'block';
+            html2canvas(receiptElement, { scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, canvas.height * 80 / canvas.width] });
+                pdf.addImage(imgData, 'PNG', 0, 0, 80, canvas.height * 80 / canvas.width);
+                pdf.save(`struk-ffc-${trx.id}.pdf`);
+                receiptElement.style.display = 'none';
+            });
         }
         
         window.generateShiftReport = () => {
-            // ... (rest of PDF generation logic)
-        }
+            const { jsPDF } = window.jspdf;
+            const reportElement = document.getElementById('shift-report-template');
+            const reportDate = document.getElementById('report-page-date')?.value || getTodayString();
+            const branch = loggedInUser.branch === 'All' ? activeBranch : loggedInUser.branch;
+            const { transactions, expenses, menu } = loadDataForBranch(branch, reportDate);
+            
+            document.getElementById('report-date-val').textContent = new Date(reportDate).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('report-cashier-val').textContent = loggedInUser.name;
+            document.getElementById('report-gross-val').textContent = formatCurrency(transactions.reduce((sum, trx) => sum + trx.total, 0));
+            document.getElementById('report-expense-val').textContent = `(${formatCurrency(expenses.reduce((sum, exp) => sum + exp.amount, 0))})`;
+            document.getElementById('report-net-val').textContent = formatCurrency(transactions.reduce((sum, trx) => sum + trx.total, 0) - expenses.reduce((sum, exp) => sum + exp.amount, 0));
+            
+            const bestSellersContainer = document.createElement('div');
+            const salesCount = {};
+            transactions.forEach(trx => { trx.items.forEach(item => { salesCount[item.name] = (salesCount[item.name] || 0) + item.quantity; }); });
+            const sortedItems = Object.entries(salesCount).sort((a, b) => b[1] - a[1]).slice(0, 3);
+            sortedItems.forEach(([name, count], index) => { bestSellersContainer.innerHTML += `<p>${index + 1}. ${name} (${count} terjual)</p>`; });
+            document.getElementById('report-bestsellers-val').innerHTML = bestSellersContainer.innerHTML;
+            
+            const paymentSummary = transactions.reduce((acc, trx) => {
+                acc[trx.paymentMethod] = (acc[trx.paymentMethod] || 0) + trx.total;
+                return acc;
+            }, {});
+            const paymentTable = document.getElementById('report-payment-summary-table');
+            paymentTable.innerHTML = '';
+            for (const method in paymentSummary) {
+                const row = paymentTable.insertRow();
+                row.innerHTML = `<td>Total ${method}:</td><td style="text-align: right;">${formatCurrency(paymentSummary[method])}</td>`;
+            }
+
+            const trxTable = document.getElementById('report-transactions-table');
+            trxTable.innerHTML = `<thead style="background-color: #eee; font-weight: bold;"><tr><td style="padding: 5px;">Waktu</td><td style="padding: 5px;">Item</td><td style="padding: 5px;">Metode</td><td style="padding: 5px; text-align: right;">Total</td></tr></thead><tbody></tbody>`;
+            const trxBody = trxTable.querySelector('tbody');
+            transactions.forEach(trx => {
+                const itemsString = trx.items.map(i => `${i.quantity}x ${i.name}`).join(', ');
+                const row = trxBody.insertRow();
+                row.innerHTML = `<td style="padding: 5px; border-bottom: 1px solid #ddd;">${new Date(trx.timestamp).toLocaleTimeString('id-ID')}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">${itemsString}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">${trx.paymentMethod}</td><td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: right;">${formatCurrency(trx.total)}</td>`;
+            });
+
+            const expTable = document.getElementById('report-expenses-table');
+            expTable.innerHTML = `<thead style="background-color: #eee; font-weight: bold;"><tr><td style="padding: 5px;">Keterangan</td><td style="padding: 5px; text-align: right;">Nominal</td></tr></thead><tbody></tbody>`;
+            const expBody = expTable.querySelector('tbody');
+            expenses.forEach(exp => {
+                const row = expBody.insertRow();
+                row.innerHTML = `<td style="padding: 5px; border-bottom: 1px solid #ddd;">${exp.name}</td><td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: right;">${formatCurrency(exp.amount)}</td>`;
+            });
+
+            const stockTable = document.getElementById('report-stock-table');
+            stockTable.innerHTML = `<thead style="background-color: #eee; font-weight: bold;"><tr><td style="padding: 5px;">Kategori</td><td style="padding: 5px;">Nama Produk</td><td style="padding: 5px; text-align: right;">Sisa Stok</td></tr></thead><tbody></tbody>`;
+            const stockBody = stockTable.querySelector('tbody');
+            for (const category in menu) {
+                menu[category].forEach(item => {
+                    const row = stockBody.insertRow();
+                    row.innerHTML = `<td style="padding: 5px; border-bottom: 1px solid #ddd;">${category}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">${item.name}</td><td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: right;">${item.stock}</td>`;
+                });
+            }
+
+            reportElement.style.display = 'block';
+            html2canvas(reportElement, { scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                const imgProps= pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`laporan-shift-${loggedInUser.name}-${reportDate}.pdf`);
+                reportElement.style.display = 'none';
+            });
+        };
 
         window.exportToCSV = () => {
-            // ... (rest of CSV generation logic)
+            const reportDate = document.getElementById('report-page-date')?.value || getTodayString();
+            const branch = loggedInUser.branch === 'All' ? activeBranch : loggedInUser.branch;
+            const { transactions, expenses } = loadDataForBranch(branch, reportDate);
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Laporan Transaksi\n";
+            csvContent += "ID,Waktu,Kasir,Metode,Item,Jumlah,Harga,Total Item,Diskon,Total Transaksi\n";
+
+            transactions.forEach(trx => {
+                const subtotal = trx.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                let discountAmount = 0;
+                if (trx.discount.type === 'percent') {
+                    discountAmount = subtotal * (trx.discount.value / 100);
+                } else {
+                    discountAmount = trx.discount.value;
+                }
+                trx.items.forEach(item => {
+                    const row = [trx.id, new Date(trx.timestamp).toLocaleString('id-ID'), trx.cashier, trx.paymentMethod, `"${item.name}"`, item.quantity, item.price, item.quantity * item.price, discountAmount, trx.total];
+                    csvContent += row.join(",") + "\n";
+                });
+            });
+
+            csvContent += "\nLaporan Pengeluaran\n";
+            csvContent += "Keterangan,Nominal\n";
+            expenses.forEach(exp => {
+                const row = [`"${exp.name}"`, exp.amount];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `laporan-ffc-${reportDate}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
+
+        window.getReportText = () => {
+            const reportDate = document.getElementById('report-page-date')?.value || getTodayString();
+            const branch = loggedInUser.branch === 'All' ? activeBranch : loggedInUser.branch;
+            const { transactions, expenses } = loadDataForBranch(branch, reportDate);
+
+            const grossRevenue = transactions.reduce((sum, trx) => sum + trx.total, 0);
+            const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const netIncome = grossRevenue - totalExpenses;
+
+            const salesCount = {};
+            transactions.forEach(trx => { trx.items.forEach(item => { salesCount[item.name] = (salesCount[item.name] || 0) + item.quantity; }); });
+            const sortedItems = Object.entries(salesCount).sort((a, b) => b[1] - a[1]).slice(0, 3);
+            const bestSellersText = sortedItems.map(([name, count], i) => `${i+1}. ${name} (${count} terjual)`).join('\n');
+
+            const paymentSummary = transactions.reduce((acc, trx) => {
+                acc[trx.paymentMethod] = (acc[trx.paymentMethod] || 0) + trx.total;
+                return acc;
+            }, {});
+            let paymentText = '';
+            for(const method in paymentSummary) {
+                paymentText += ` - Total ${method}: ${formatCurrency(paymentSummary[method])}\n`;
+            }
+
+            const message = `*Laporan Shift - FFC*
+-------------------
+*Cabang:* ${branch}
+*Tanggal:* ${new Date(reportDate).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+*Kasir:* ${loggedInUser.name}
+
+*Ringkasan Keuangan:*
+- Pendapatan Kotor: ${formatCurrency(grossRevenue)}
+- Total Pengeluaran: ${formatCurrency(totalExpenses)}
+- *Laba Bersih:* *${formatCurrency(netIncome)}*
+
+*Ringkasan Pembayaran:*
+${paymentText || 'Tidak ada pembayaran'}
+*Produk Terlaris:*
+${bestSellersText || 'Tidak ada penjualan'}
+
+Laporan ini dibuat otomatis dari FFC-OS.`;
+            return message;
+        };
+
+        window.sendViaWhatsApp = () => {
+            const owner = users['aditya'];
+            const ownerPhone = owner.phone;
+            if (!ownerPhone) {
+                alert("Nomor WhatsApp owner tidak diatur.");
+                return;
+            }
+            const message = getReportText();
+            const whatsappUrl = `https://wa.me/${ownerPhone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        };
+
+        window.sendViaEmail = () => {
+            const owner = users['aditya'];
+            const ownerEmail = owner.email;
+            if (!ownerEmail) {
+                alert("Alamat email owner tidak diatur.");
+                return;
+            }
+            const reportDate = document.getElementById('report-page-date')?.value || getTodayString();
+            const branch = loggedInUser.branch === 'All' ? activeBranch : loggedInUser.branch;
+            const subject = `Laporan Shift FFC - ${branch} - ${reportDate}`;
+            const body = getReportText().replace(/\*/g, '').replace(/\n/g, '%0D%0A');
+            
+            const mailtoUrl = `mailto:${ownerEmail}?subject=${encodeURIComponent(subject)}&body=${body}`;
+            window.location.href = mailtoUrl;
+        };
 
         // --- INITIALIZATION ---
         function initApp() {
