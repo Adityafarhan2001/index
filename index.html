@@ -46,10 +46,13 @@
     </div>
 
     <!-- MAIN APP SCREEN -->
-    <div id="main-app" class="h-screen w-screen flex bg-gray-900 hidden">
+    <div id="main-app" class="relative min-h-screen lg:flex hidden">
         <!-- SIDEBAR -->
-        <aside class="w-64 bg-gray-800 p-4 flex flex-col border-r border-gray-700">
-            <div class="text-2xl font-bold text-white mb-4">FFC-OS</div>
+        <aside id="sidebar" class="bg-gray-800 text-gray-300 w-64 p-4 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-200 ease-in-out z-30 border-r border-gray-700">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-bold text-white mb-4">FFC-OS</div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
             <div id="branch-selector-container" class="mb-4 hidden"><label for="branch-selector" class="text-xs text-gray-400">Pilih Cabang</label><select id="branch-selector" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md mt-1 text-sm"></select></div>
             <nav id="sidebar-nav" class="flex-grow space-y-2"></nav>
             <div class="mt-auto">
@@ -57,9 +60,18 @@
                 <button onclick="handleLogout()" class="w-full mt-3 flex items-center justify-center py-2 px-4 bg-red-600 hover:bg-red-700 rounded-md text-white font-semibold transition-colors">Logout</button>
             </div>
         </aside>
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden"></div>
 
         <!-- MAIN CONTENT -->
-        <main id="main-content" class="flex-1 p-6 overflow-y-auto"></main>
+        <div class="flex-1 flex flex-col">
+            <header class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-20 lg:hidden p-4 flex justify-between items-center border-b border-gray-700">
+                 <button onclick="toggleSidebar()" class="text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                 </button>
+                 <span class="text-xl font-bold text-white">FFC-OS</span>
+            </header>
+            <main id="main-content" class="flex-1 p-6 bg-gray-900 overflow-y-auto"></main>
+        </div>
     </div>
 
     <!-- PAGE TEMPLATES -->
@@ -195,6 +207,13 @@
             else if (pageId === 'reports') document.getElementById('report-page-date').value = getTodayString();
             else if (pageId === 'settings') renderMenuManagement();
         }
+        
+        window.toggleSidebar = () => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        };
 
         // --- LOCAL STORAGE FUNCTIONS ---
         function loadDataForBranch(branch, date) {
@@ -254,7 +273,12 @@
                     navItem.className = 'sidebar-item';
                     navItem.dataset.page = item.id;
                     navItem.innerHTML = `${item.icon} ${item.label}`;
-                    navItem.onclick = () => navigateTo(item.id);
+                    navItem.onclick = () => {
+                        navigateTo(item.id);
+                        if (window.innerWidth < 1024) { // lg breakpoint
+                            toggleSidebar();
+                        }
+                    };
                     navContainer.appendChild(navItem);
                 }
             });
