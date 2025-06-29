@@ -7,50 +7,52 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #111827; color: #d1d5db;}
-        .card { background-color: #1f2937; border: 1px solid #374151; }
-        .menu-button { background-color: #374151; color: #e5e7eb; border: 1px solid #4b5563; padding: 0.75rem; border-radius: 0.5rem; text-align: center; transition: all 0.2s ease-in-out; font-weight: 600; }
-        .menu-button:hover:not(:disabled) { background-color: #3b82f6; color: white; border-color: #3b82f6; }
-        .menu-button:disabled { background-color: #374151; color: #6b7280; border-color: #4b5563; cursor: not-allowed; opacity: 0.5; }
-        .qty-button { width: 28px; height: 28px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: background-color 0.2s; background-color: #374151; color: #d1d5db; }
-        .qty-button:hover { background-color: #4b5563; }
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.7); z-index: 50; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        body { font-family: 'Poppins', sans-serif; background-color: #fefce8; }
+        .font-anton { font-family: 'Anton', sans-serif; }
+        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .awning { height: 40px; background-image: repeating-linear-gradient(-45deg, #facc15, #facc15 30px, #ef4444 30px, #ef4444 60px); border-bottom: 5px solid #b91c1c; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2); }
+        .menu-button { background-color: #fde047; color: #b91c1c; border: 2px solid #dc2626; padding: 0.5rem 0.75rem; border-radius: 0.5rem; text-align: center; transition: all 0.2s ease-in-out; box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1); font-weight: 700; }
+        .menu-button:hover:not(:disabled) { background-color: #dc2626; color: #fde047; transform: scale(1.05); }
+        .menu-button:disabled { background-color: #e5e7eb; color: #9ca3af; border-color: #d1d5db; cursor: not-allowed; }
+        .qty-button { width: 28px; height: 28px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: background-color 0.2s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 50; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .printable-area { display: none; position: absolute; left: -9999px; background: white; color: black; }
         #receipt-template { width: 302px; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 12px; }
         #shift-report-template { width: 794px; padding: 40px; font-family: 'Arial', sans-serif; font-size: 12px; }
-        .sidebar-item { display: flex; align-items: center; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background-color 0.2s; cursor: pointer; }
+        .sidebar { background-color: #1f2937; color: #d1d5db; }
+        .sidebar-item { display: flex; align-items: center; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background-color 0.2s; cursor: pointer; color: #d1d5db; }
         .sidebar-item:hover, .sidebar-item.active { background-color: #374151; color: white; }
         .sidebar-item svg { width: 1.25rem; height: 1.25rem; margin-right: 0.75rem; }
-        .kds-ticket { background-color: #1f2937; border: 1px solid #4b5563; border-left-width: 4px; }
+        .kds-ticket { background-color: #fff; border: 1px solid #e5e7eb; border-left-width: 4px; color: #111827; }
         .kds-ticket.new { border-left-color: #3b82f6; }
         .kds-ticket.cooking { border-left-color: #f59e0b; }
     </style>
 </head>
 <body>
     <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-900">
-        <div class="w-full max-w-sm p-8 space-y-6 bg-gray-800 rounded-xl shadow-2xl border border-gray-700">
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-yellow-50">
+        <div class="w-full max-w-sm p-8 space-y-6 bg-white rounded-xl shadow-lg">
             <div class="text-center">
-                <h1 class="text-3xl font-bold text-white">FFC-OS</h1>
-                <p class="text-gray-400">Login untuk mengakses sistem</p>
+                <h1 class="font-anton text-4xl text-red-600">FARISAH FRIED CHICKEN</h1>
+                <p class="text-gray-600">Silakan login untuk memulai</p>
             </div>
             <div class="space-y-4">
-                <div><label for="username" class="text-sm font-bold text-gray-400 block">Username</label><input type="text" id="username" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md mt-1 focus:ring-blue-500 focus:border-blue-500 text-white"></div>
-                <div><label for="password" class="text-sm font-bold text-gray-400 block">Password</label><input type="password" id="password" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md mt-1 focus:ring-blue-500 focus:border-blue-500 text-white"></div>
+                <div><label for="username" class="text-sm font-bold text-gray-600 block">Username</label><input type="text" id="username" class="w-full p-2 border border-gray-300 rounded-md mt-1 focus:ring-red-500 focus:border-red-500"></div>
+                <div><label for="password" class="text-sm font-bold text-gray-600 block">Password</label><input type="password" id="password" class="w-full p-2 border border-gray-300 rounded-md mt-1 focus:ring-red-500 focus:border-red-500"></div>
             </div>
-            <p id="login-error" class="text-sm text-center text-red-400 h-4"></p>
-            <button onclick="handleLogin()" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white text-lg font-bold transition-colors">Login</button>
+            <p id="login-error" class="text-sm text-center text-red-500 h-4"></p>
+            <button onclick="handleLogin()" class="w-full py-3 px-4 bg-red-600 hover:bg-red-700 rounded-md text-white text-lg font-bold transition-colors">Login</button>
         </div>
     </div>
 
     <!-- MAIN APP SCREEN -->
     <div id="main-app" class="relative min-h-screen lg:flex hidden">
         <!-- SIDEBAR -->
-        <aside id="sidebar" class="bg-gray-800 text-gray-300 w-64 p-4 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-200 ease-in-out z-30 border-r border-gray-700">
+        <aside id="sidebar" class="sidebar w-64 p-4 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-200 ease-in-out z-30 border-r border-gray-700">
             <div class="flex justify-between items-center">
-                <div class="text-2xl font-bold text-white mb-4">FFC-OS</div>
+                <div class="text-2xl font-bold text-white mb-4">FFC System</div>
                 <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
             </div>
             <div id="branch-selector-container" class="mb-4 hidden"><label for="branch-selector" class="text-xs text-gray-400">Pilih Cabang</label><select id="branch-selector" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md mt-1 text-sm"></select></div>
@@ -63,43 +65,43 @@
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden"></div>
 
         <!-- MAIN CONTENT -->
-        <div class="flex-1 flex flex-col">
-            <header class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-20 lg:hidden p-4 flex justify-between items-center border-b border-gray-700">
-                 <button onclick="toggleSidebar()" class="text-white">
+        <div class="flex-1 flex flex-col bg-yellow-50 text-gray-800">
+            <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-20 lg:hidden p-4 flex justify-between items-center border-b border-gray-200">
+                 <button onclick="toggleSidebar()" class="text-gray-800">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
                  </button>
-                 <span class="text-xl font-bold text-white">FFC-OS</span>
+                 <span class="text-xl font-bold text-red-600">FFC System</span>
             </header>
-            <main id="main-content" class="flex-1 p-6 bg-gray-900 overflow-y-auto"></main>
+            <main id="main-content" class="flex-1 p-6 overflow-y-auto"></main>
         </div>
     </div>
 
     <!-- PAGE TEMPLATES -->
     <template id="dashboard-page">
-        <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Dashboard <span id="dashboard-branch-name" class="text-blue-400"></span></h1><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="card p-4"><h3 class="text-gray-400">Pendapatan Hari Ini</h3><p id="kpi-revenue" class="text-3xl font-bold text-white mt-1">Rp 0</p></div><div class="card p-4"><h3 class="text-gray-400">Transaksi Hari Ini</h3><p id="kpi-transactions" class="text-3xl font-bold text-white mt-1">0</p></div><div class="card p-4"><h3 class="text-gray-400">Produk Terjual</h3><p id="kpi-items-sold" class="text-3xl font-bold text-white mt-1">0</p></div></div><div class="card p-4"><h3 class="font-bold text-white mb-4">Penjualan 7 Hari Terakhir</h3><div id="sales-chart" class="h-64 w-full flex items-end gap-2 p-4"></div></div><div class="card p-4"><h3 class="font-bold text-white mb-4">Performa Cabang Hari Ini</h3><div id="branch-performance-table" class="overflow-x-auto"></div></div></div>
+        <div class="space-y-6"><h1 class="text-3xl font-bold text-gray-800">Dashboard <span id="dashboard-branch-name" class="text-blue-600"></span></h1><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="card p-4"><h3 class="text-gray-500">Pendapatan Hari Ini</h3><p id="kpi-revenue" class="text-3xl font-bold text-gray-800 mt-1">Rp 0</p></div><div class="card p-4"><h3 class="text-gray-500">Transaksi Hari Ini</h3><p id="kpi-transactions" class="text-3xl font-bold text-gray-800 mt-1">0</p></div><div class="card p-4"><h3 class="text-gray-500">Produk Terlaris</h3><p id="kpi-items-sold" class="text-3xl font-bold text-gray-800 mt-1">-</p></div></div><div class="card p-4"><h3 class="font-bold text-gray-800 mb-4">Penjualan 7 Hari Terakhir</h3><div id="sales-chart" class="h-64 w-full flex items-end gap-2 p-4"></div></div><div class="card p-4"><h3 class="font-bold text-gray-800 mb-4">Performa Cabang Hari Ini</h3><div id="branch-performance-table" class="overflow-x-auto"></div></div></div>
     </template>
     <template id="pos-page">
-        <main class="grid grid-cols-1 xl:grid-cols-3 gap-6"><section class="xl:col-span-1 flex flex-col gap-6"><div class="card p-4"><h2 class="text-2xl font-bold text-white mb-4">Pilih Menu</h2><div id="menu-container" class="flex flex-col gap-6"></div></div></section><section class="xl:col-span-1 flex flex-col gap-6"><div class="card p-4"><h2 class="text-2xl font-bold text-white mb-4">Transaksi Saat Ini</h2><div class="overflow-y-auto min-h-[200px] max-h-[400px] pr-2"><table class="w-full text-left"><tbody id="cart-table-body" class="divide-y divide-gray-700"></tbody></table></div><div class="border-t-2 border-gray-700 border-dashed mt-4 pt-4"><div class="flex justify-between items-center font-semibold text-md mb-2"><span>Subtotal</span><span id="cart-subtotal">Rp 0</span></div><div id="discount-display" class="flex justify-between items-center font-semibold text-md mb-2 text-red-400 hidden"><span>Diskon</span><span id="cart-discount-amount">- Rp 0</span></div><div class="flex justify-between items-center font-bold text-xl mb-4 border-t border-gray-700 pt-2"><span>Total</span><span id="cart-total">Rp 0</span></div><button onclick="openDiscountModal()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-yellow-900 font-bold py-2 rounded-lg text-md mb-2">Tambah Diskon</button><div class="mb-4"><span class="text-sm font-bold text-gray-300">Metode Pembayaran:</span><div class="flex justify-around mt-2"><label class="flex items-center gap-2"><input type="radio" name="paymentMethod" value="Tunai" checked class="bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500"> Tunai</label><label class="flex items-center gap-2"><input type="radio" name="paymentMethod" value="QRIS" class="bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500"> QRIS</label><label class="flex items-center gap-2"><input type="radio" name="paymentMethod" value="Debit" class="bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500"> Debit</label></div></div><button onclick="saveTransaction()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg text-lg transition-all duration-300 flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>Simpan Transaksi</button></div></div></section><section class="xl:col-span-1 flex flex-col gap-6"><div class="card p-4"><h2 class="text-2xl font-bold text-white mb-4">Produk Terlaris Hari Ini</h2><div id="best-sellers-container" class="space-y-2"></div></div><div class="card p-4"><h2 class="text-2xl font-bold text-white mb-4">Riwayat Transaksi</h2><div id="transaction-history" class="overflow-y-auto max-h-[400px] pr-2 space-y-2"></div></div></section></main>
+        <main class="grid grid-cols-1 xl:grid-cols-3 gap-6"><section class="xl:col-span-1 flex flex-col gap-6"><div class="card p-4"><h2 class="text-2xl font-bold text-red-700 mb-4">Pilih Menu</h2><div id="menu-container" class="flex flex-col gap-6"></div></div></section><section class="xl:col-span-1 flex flex-col gap-6"><div class="card p-4"><h2 class="text-2xl font-bold text-red-700 mb-4">Transaksi Saat Ini</h2><div class="overflow-y-auto min-h-[200px] max-h-[400px] pr-2"><table class="w-full text-left"><tbody id="cart-table-body" class="divide-y divide-gray-200"></tbody></table></div><div class="border-t-2 border-dashed mt-4 pt-4"><div class="flex justify-between items-center font-bold text-xl mb-4"><span>Total</span><span id="cart-total">Rp 0</span></div><div class="mb-4"><span class="text-sm font-bold text-gray-700">Metode Pembayaran:</span><div class="flex justify-around mt-2"><label class="flex items-center gap-2"><input type="radio" name="paymentMethod" value="Tunai" checked class="text-red-600 focus:ring-red-500"> Tunai</label><label class="flex items-center gap-2"><input type="radio" name="paymentMethod" value="QRIS" class="text-red-600 focus:ring-red-500"> QRIS</label><label class="flex items-center gap-2"><input type="radio" name="paymentMethod" value="Debit" class="text-red-600 focus:ring-red-500"> Debit</label></div></div><button onclick="saveTransaction()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-lg transition-all duration-300 flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>Simpan Transaksi</button></div></div></section><section class="xl:col-span-1 flex flex-col gap-6"><div class="card p-4"><h2 class="text-2xl font-bold text-red-700 mb-4">Produk Terlaris Hari Ini</h2><div id="best-sellers-container" class="space-y-2"></div></div><div class="card p-4"><h2 class="text-2xl font-bold text-red-700 mb-4">Riwayat Transaksi</h2><div id="transaction-history" class="overflow-y-auto max-h-[400px] pr-2 space-y-2"></div></div></section></main>
     </template>
     <template id="kds-page">
-        <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Tampilan Dapur (KDS)</h1><div id="kds-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div></div>
+        <div class="space-y-6"><h1 class="text-3xl font-bold text-gray-800">Tampilan Dapur (KDS)</h1><div id="kds-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div></div>
     </template>
     <template id="reports-page">
-        <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Laporan</h1><div class="card p-4"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-white">Laporan Harian</h2><div class="flex gap-2"><input type="date" id="report-page-date" class="p-2 border rounded-lg bg-gray-700 border-gray-600 text-white shadow-sm"><button onclick="generateShiftReport()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">PDF</button><button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">Excel</button></div></div><div class="border-t border-gray-700 mt-6 pt-4"><h2 class="text-xl font-bold text-white mb-4">Kirim Laporan ke Owner</h2><div class="flex gap-4"><button onclick="sendViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2"><span>WhatsApp</span></button><button onclick="sendViaEmail()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2"><span>Email</span></button></div></div></div></div>
+        <div class="space-y-6"><h1 class="text-3xl font-bold text-gray-800">Laporan</h1><div class="card p-4"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-gray-800">Unduh Laporan Harian</h2><div class="flex gap-2"><input type="date" id="report-page-date" class="p-2 border rounded-lg bg-white shadow-sm"><button onclick="generateShiftReport()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">PDF</button><button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">Excel</button></div></div><div class="border-t border-gray-200 mt-6 pt-4"><h2 class="text-xl font-bold text-gray-800 mb-4">Kirim Laporan ke Owner</h2><div class="flex gap-4"><button onclick="sendViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2"><span>WhatsApp</span></button><button onclick="sendViaEmail()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2"><span>Email</span></button></div></div></div>
+        <div id="owner-report-input-card" class="card p-4"><h2 class="text-xl font-bold text-gray-800 mb-4">Input Laporan Harian Cabang</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><select id="summary-branch-selector" class="w-full p-2 bg-white border border-gray-300 rounded-md mt-1"></select><input type="date" id="summary-date-input" class="p-2 border rounded-lg bg-white shadow-sm"></div><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"><div><label class="text-sm text-gray-500">Total Pendapatan</label><input type="number" id="summary-revenue" class="w-full p-2 border border-gray-300 rounded-md mt-1"></div><div><label class="text-sm text-gray-500">Total Pengeluaran</label><input type="number" id="summary-expenses" class="w-full p-2 border border-gray-300 rounded-md mt-1"></div><div><label class="text-sm text-gray-500">Jumlah Transaksi</label><input type="number" id="summary-trx-count" class="w-full p-2 border border-gray-300 rounded-md mt-1"></div><div><label class="text-sm text-gray-500">Produk Terlaris</label><input type="text" id="summary-bestseller" class="w-full p-2 border border-gray-300 rounded-md mt-1"></div></div><div class="mt-4 flex justify-end"><button onclick="saveBranchSummary()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold">Simpan Laporan Cabang</button></div></div>
+        <div id="owner-report-download-card" class="card p-4 mt-6"><h2 class="text-xl font-bold text-gray-800 mb-4">Unduh Rekapitulasi Seluruh Cabang</h2><div class="flex gap-4"><button onclick="generateConsolidatedReportPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2">Unduh Rekap PDF</button><button onclick="exportConsolidatedCSV()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2">Unduh Rekap Excel</button></div></div>
+        </div>
     </template>
     <template id="settings-page">
-        <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Pengaturan</h1><div class="card p-4"><h2 class="text-xl font-bold text-white mb-4">Kelola Menu, Harga & Stok</h2><div id="menu-management-list" class="space-y-4"></div><div class="mt-6 flex justify-end"><button onclick="saveMenuChanges()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold">Simpan Perubahan Menu</button></div></div><div id="reset-card" class="card p-4"><h2 class="text-xl font-bold text-white mb-4">Tindakan Berbahaya</h2><button onclick="resetDailyData()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">Reset Data Hari Ini</button></div></div>
+        <div class="space-y-6"><h1 class="text-3xl font-bold text-gray-800">Pengaturan</h1><div class="card p-4"><h2 class="text-xl font-bold text-gray-800 mb-4">Kelola Menu, Harga & Stok</h2><div id="menu-management-list" class="space-y-4"></div><div class="mt-6 flex justify-end"><button onclick="saveMenuChanges()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold">Simpan Perubahan Menu</button></div></div><div id="reset-card" class="card p-4"><h2 class="text-xl font-bold text-gray-800 mb-4">Tindakan Berbahaya</h2><button onclick="resetDailyData()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">Reset Data Hari Ini</button></div></div>
     </template>
     
     <!-- Modals and Templates -->
-    <div id="discount-modal-overlay" class="modal-overlay">
-        <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-xl w-full max-w-sm m-4"><div class="p-4 border-b border-gray-700 flex justify-between items-center"><h3 class="text-xl font-bold text-white">Beri Diskon</h3><button onclick="closeDiscountModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button></div><div class="p-4 space-y-4"><div><label class="text-sm font-bold text-gray-400 block">Tipe Diskon</label><select id="discount-type" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md mt-1"><option value="percent">Persen (%)</option><option value="nominal">Nominal (Rp)</option></select></div><div><label for="discount-value" class="text-sm font-bold text-gray-400 block">Jumlah Diskon</label><input type="number" id="discount-value" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md mt-1"></div></div><div class="p-4 border-t border-gray-700 bg-gray-900/50 flex justify-end gap-3"><button onclick="closeDiscountModal()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500 font-semibold">Batal</button><button onclick="applyDiscount()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold">Terapkan</button></div></div>
-    </div>
     <div id="menu-modal-overlay" class="modal-overlay">
-        <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-xl w-full max-w-lg m-4">
-            <div class="p-4 border-b border-gray-700 flex justify-between items-center"><h3 class="text-xl font-bold text-white">Kelola Menu, Harga & Stok</h3><button onclick="closeMenuModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button></div>
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg m-4">
+            <div class="p-4 border-b flex justify-between items-center"><h3 class="text-xl font-bold text-gray-800">Kelola Menu, Harga & Stok</h3><button onclick="closeMenuModal()" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button></div>
             <div class="p-4 max-h-96 overflow-y-auto"><div id="menu-management-list" class="space-y-4"></div></div>
-            <div class="p-4 border-t border-gray-700 bg-gray-900/50 flex justify-end gap-3"><button onclick="closeMenuModal()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500 font-semibold">Batal</button><button onclick="saveMenuChanges()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold">Simpan Perubahan</button></div>
+            <div class="p-4 border-t bg-gray-50 flex justify-end gap-3"><button onclick="closeMenuModal()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">Batal</button><button onclick="saveMenuChanges()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-semibold">Simpan Perubahan</button></div>
         </div>
     </div>
     <div id="receipt-template" class="printable-area">
@@ -114,7 +116,7 @@
 
     <script>
         // --- GLOBAL STATE & DATA ---
-        let currentCart = { items: [], discount: { type: 'nominal', value: 0 } };
+        let currentCart = { items: [] };
         let loggedInUser = null;
         let activeBranch = 'FFC Cabang 1';
         let kdsInterval;
@@ -204,7 +206,23 @@
                 renderKdsPage();
                 kdsInterval = setInterval(renderKdsPage, 5000);
             }
-            else if (pageId === 'reports') document.getElementById('report-page-date').value = getTodayString();
+            else if (pageId === 'reports') {
+                document.getElementById('report-page-date').value = getTodayString();
+                if(loggedInUser.role === 'owner') {
+                    const selector = document.getElementById('summary-branch-selector');
+                    selector.innerHTML = '';
+                    branches.forEach(branch => {
+                        const option = document.createElement('option');
+                        option.value = branch;
+                        option.textContent = branch;
+                        selector.appendChild(option);
+                    });
+                    document.getElementById('summary-date-input').value = getTodayString();
+                } else {
+                    document.getElementById('owner-report-input-card').style.display = 'none';
+                    document.getElementById('owner-report-download-card').style.display = 'none';
+                }
+            }
             else if (pageId === 'settings') renderMenuManagement();
         }
         
@@ -221,6 +239,7 @@
             const expenses = JSON.parse(localStorage.getItem(getStorageKey('expenses', branch, date)) || '[]');
             let menu = JSON.parse(localStorage.getItem(getStorageKey('menuState', branch, 'all')));
             const counter = parseInt(localStorage.getItem(getStorageKey('transactionCounter', branch, date)) || '0', 10);
+            const summary = JSON.parse(localStorage.getItem(getStorageKey('summary', branch, date)) || '{}');
             
             if (!menu || Object.keys(menu).length === 0) {
                 menu = JSON.parse(JSON.stringify(initialMenuData));
@@ -231,7 +250,7 @@
                 menu = stockWithId;
                 localStorage.setItem(getStorageKey('menuState', branch, 'all'), JSON.stringify(menu));
             }
-            return {transactions, expenses, menu, counter};
+            return {transactions, expenses, menu, counter, summary};
         }
 
         function writeDataForBranch(branch, date, data) {
@@ -308,15 +327,17 @@
             const date = getTodayString();
             document.getElementById('dashboard-branch-name').textContent = `(${activeBranch})`;
             
-            const { transactions, expenses } = loadDataForBranch(activeBranch, date);
-            calculateFinancialSummary(transactions, expenses);
+            const { summary } = loadDataForBranch(activeBranch, date);
+            document.getElementById('kpi-revenue').textContent = formatCurrency(summary.revenue || 0);
+            document.getElementById('kpi-transactions').textContent = summary.trxCount || 0;
+            document.getElementById('kpi-items-sold').textContent = summary.bestseller || '-';
             
             let salesData = [];
             let maxSales = 0;
             for (let i = 6; i >= 0; i--) {
                 const d = getDateString(i);
                 const data = loadDataForBranch(activeBranch, d);
-                const totalSales = data.transactions.reduce((sum, trx) => sum + trx.total, 0);
+                const totalSales = data.summary.revenue || 0;
                 salesData.push({ date: d, totalSales });
                 if (totalSales > maxSales) maxSales = totalSales;
             }
@@ -325,11 +346,11 @@
             const allBranchPerformance = {};
             branches.forEach(b => {
                 const data = loadDataForBranch(b, date);
-                const revenue = data.transactions.reduce((sum, trx) => sum + trx.total, 0);
-                const salesCount = {};
-                data.transactions.forEach(trx => { trx.items.forEach(item => { salesCount[item.name] = (salesCount[item.name] || 0) + item.quantity; }); });
-                const bestSeller = Object.keys(salesCount).length > 0 ? Object.entries(salesCount).sort((a,b) => b[1] - a[1])[0][0] : '-';
-                allBranchPerformance[b] = { revenue, trxCount: data.transactions.length, bestSeller };
+                allBranchPerformance[b] = { 
+                    revenue: data.summary.revenue || 0, 
+                    trxCount: data.summary.trxCount || 0, 
+                    bestSeller: data.summary.bestseller || '-' 
+                };
             });
             renderBranchPerformanceTable(allBranchPerformance);
         }
@@ -359,7 +380,7 @@
                 bar.style.height = `${barHeight}%`;
                 
                 const tooltip = document.createElement('div');
-                tooltip.className = 'absolute bottom-full mb-2 w-32 bg-gray-900 text-white text-xs rounded py-1 px-2 text-center opacity-0 group-hover:opacity-100 transition-opacity';
+                tooltip.className = 'absolute bottom-full mb-2 w-32 bg-gray-800 text-white text-xs rounded py-1 px-2 text-center opacity-0 group-hover:opacity-100 transition-opacity';
                 tooltip.innerHTML = `<strong>${new Date(data.date).toLocaleDateString('id-ID', {weekday: 'short', day: 'numeric'})}</strong><br>${formatCurrency(data.totalSales)}`;
                 bar.appendChild(tooltip);
 
@@ -370,16 +391,16 @@
         function renderBranchPerformanceTable(performanceData) {
             const container = document.getElementById('branch-performance-table');
             if(!container) return;
-            let tableHtml = `<table class="w-full text-left">
-                <thead class="text-xs text-gray-400 uppercase bg-gray-700/50">
+            let tableHtml = `<table class="w-full text-left text-gray-800">
+                <thead class="text-xs text-gray-500 uppercase bg-gray-100">
                     <tr><th class="p-3">Cabang</th><th class="p-3">Pendapatan</th><th class="p-3">Transaksi</th><th class="p-3">Produk Terlaris</th></tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700">`;
+                <tbody class="divide-y divide-gray-200">`;
             
             branches.forEach(branch => {
                 const data = performanceData[branch] || { revenue: 0, trxCount: 0, bestSeller: '-' };
                 tableHtml += `<tr>
-                    <td class="p-3 font-semibold text-white">${branch}</td>
+                    <td class="p-3 font-semibold">${branch}</td>
                     <td class="p-3">${formatCurrency(data.revenue)}</td>
                     <td class="p-3">${data.trxCount}</td>
                     <td class="p-3">${data.bestSeller}</td>
@@ -399,16 +420,16 @@
             listContainer.innerHTML = '';
             for (const category in menu) {
                 const categoryTitle = document.createElement('h4');
-                categoryTitle.className = 'text-md font-bold text-white border-b border-gray-700 pb-1';
+                categoryTitle.className = 'text-md font-bold text-gray-800 border-b pb-1';
                 categoryTitle.textContent = category;
                 listContainer.appendChild(categoryTitle);
                 menu[category].forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'grid grid-cols-3 gap-4 items-center';
                     itemDiv.innerHTML = `
-                        <label class="font-semibold text-gray-300 col-span-1">${item.name}</label>
-                        <div class="col-span-1"><label class="text-sm text-gray-400">Harga:</label><input type="number" data-name="${item.name}" data-category="${category}" data-type="price" value="${item.price}" class="w-full p-1 bg-gray-700 border border-gray-600 rounded-md text-right"></div>
-                        <div class="col-span-1"><label class="text-sm text-gray-400">Stok:</label><input type="number" data-name="${item.name}" data-category="${category}" data-type="stock" value="${item.stock}" class="w-full p-1 bg-gray-700 border border-gray-600 rounded-md text-right"></div>
+                        <label class="font-semibold text-gray-700 col-span-1">${item.name}</label>
+                        <div class="col-span-1"><label class="text-sm">Harga:</label><input type="number" data-name="${item.name}" data-category="${category}" data-type="price" value="${item.price}" class="w-full p-1 border rounded-md text-right"></div>
+                        <div class="col-span-1"><label class="text-sm">Stok:</label><input type="number" data-name="${item.name}" data-category="${category}" data-type="stock" value="${item.stock}" class="w-full p-1 border rounded-md text-right"></div>
                     `;
                     listContainer.appendChild(itemDiv);
                 });
@@ -443,8 +464,8 @@
                 
                 ticket.innerHTML = `
                     <div class="flex justify-between items-center">
-                        <span class="font-bold text-lg text-white">#${trx.id} - ${trx.branch}</span>
-                        <span class="text-xs text-gray-400">${new Date(trx.timestamp).toLocaleTimeString('id-ID')}</span>
+                        <span class="font-bold text-lg text-gray-800">#${trx.id} - ${trx.branch}</span>
+                        <span class="text-xs text-gray-500">${new Date(trx.timestamp).toLocaleTimeString('id-ID')}</span>
                     </div>
                     <ul class="space-y-1">${itemsHtml}</ul>
                     <div class="pt-2 flex gap-2">
@@ -460,7 +481,7 @@
             const totalPendapatan = transactions.reduce((sum, trx) => sum + trx.total, 0);
             const totalPengeluaran = expenses.reduce((sum, exp) => sum + (parseFloat(exp.amount) || 0), 0);
             const labaBersih = totalPendapatan - totalPengeluaran;
-            document.querySelectorAll('#finance-pendapatan-kotor').forEach(el => el && (el.textContent = formatCurrency(totalPendapatan)));
+            document.querySelectorAll('#finance-pendapatan-kotor, #kpi-revenue').forEach(el => el && (el.textContent = formatCurrency(totalPendapatan)));
             document.querySelectorAll('#finance-total-pengeluaran').forEach(el => el && (el.textContent = `(${formatCurrency(totalPengeluaran)})`));
             document.querySelectorAll('#finance-laba-bersih').forEach(el => {
                 if(el) {
@@ -477,7 +498,7 @@
             menuContainer.innerHTML = '';
             for (const category in menuData) {
                 const categoryDiv = document.createElement('div');
-                categoryDiv.innerHTML = `<h3 class="text-lg font-bold text-gray-300 mb-3">${category}</h3>`;
+                categoryDiv.innerHTML = `<h3 class="text-lg font-bold text-red-700 mb-3">${category}</h3>`;
                 const gridDiv = document.createElement('div');
                 gridDiv.className = 'grid grid-cols-2 lg:grid-cols-2 gap-3';
                 menuData[category].forEach(item => {
@@ -500,16 +521,16 @@
             if (!historyContainer) return;
             historyContainer.innerHTML = '';
             if (transactionsData.length === 0) {
-                 historyContainer.innerHTML = `<p class="text-center py-8 text-gray-500 font-semibold">Belum ada transaksi</p>`;
+                 historyContainer.innerHTML = `<p class="text-center py-8 text-gray-400 font-semibold">Belum ada transaksi</p>`;
                  return;
             }
             transactionsData.slice().reverse().forEach(trx => {
                 const trxDiv = document.createElement('div');
-                trxDiv.className = 'bg-gray-800 p-2 rounded-md border border-gray-700 text-sm flex justify-between items-center';
+                trxDiv.className = 'bg-white p-2 rounded-md border text-sm flex justify-between items-center text-gray-800';
                 const timestamp = new Date(trx.timestamp);
                 trxDiv.innerHTML = `
-                    <div><span class="font-semibold text-white">Transaksi #${trx.id}</span><span class="block text-xs text-gray-400">${timestamp.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} - Kasir: <strong>${trx.cashier || 'N/A'}</strong></span></div>
-                    <div class="text-right"><span class="font-bold text-green-400">${formatCurrency(trx.total)}</span><button onclick="generateReceipt('${trx.id}')" class="block text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full mt-1 hover:bg-blue-500">Cetak Struk</button></div>
+                    <div><span class="font-semibold">Transaksi #${trx.id}</span><span class="block text-xs text-gray-500">${timestamp.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} - Kasir: <strong>${trx.cashier || 'N/A'}</strong></span></div>
+                    <div class="text-right"><span class="font-bold text-green-700">${formatCurrency(trx.total)}</span><button onclick="generateReceipt('${trx.id}')" class="block text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full mt-1 hover:bg-blue-600">Cetak Struk</button></div>
                 `;
                 historyContainer.appendChild(trxDiv);
             });
@@ -529,18 +550,18 @@
             const sortedItems = Object.entries(salesCount).sort((a, b) => b[1] - a[1]).slice(0, 3);
 
             if (sortedItems.length === 0) {
-                container.innerHTML = `<p class="text-center py-4 text-gray-500 font-semibold">Belum ada data penjualan</p>`;
+                container.innerHTML = `<p class="text-center py-4 text-gray-400 font-semibold">Belum ada data penjualan</p>`;
                 return;
             }
 
             sortedItems.forEach(([name, count], index) => {
                 const itemDiv = document.createElement('div');
-                itemDiv.className = 'flex items-center gap-3';
+                itemDiv.className = 'flex items-center gap-3 text-gray-800';
                 const medalColors = ['text-yellow-400', 'text-gray-400', 'text-yellow-600'];
                 itemDiv.innerHTML = `
                     <div class="font-bold text-lg ${medalColors[index] || 'text-gray-500'}">${index + 1}.</div>
-                    <div class="flex-grow font-semibold text-gray-300">${name}</div>
-                    <div class="font-bold text-white">${count} terjual</div>
+                    <div class="flex-grow font-semibold text-gray-700">${name}</div>
+                    <div class="font-bold text-gray-800">${count} terjual</div>
                 `;
                 container.appendChild(itemDiv);
             });
@@ -556,31 +577,15 @@
                 currentCart.items.forEach(item => {
                     const row = tableBody.insertRow();
                     row.innerHTML = `
-                        <td class="p-2 font-semibold text-gray-300">${item.name}</td>
-                        <td class="p-2"><div class="flex items-center justify-center gap-2"><button onclick="updateQuantity('${item.name}', -1)" class="qty-button">-</button><span class="font-bold w-6 text-center">${item.quantity}</span><button onclick="updateQuantity('${item.name}', 1)" class="qty-button">+</button></div></td>
-                        <td class="p-2 text-right font-bold text-white">${formatCurrency(item.price * item.quantity)}</td>
+                        <td class="p-2 font-semibold text-gray-800">${item.name}</td>
+                        <td class="p-2"><div class="flex items-center justify-center gap-2"><button onclick="updateQuantity('${item.name}', -1)" class="qty-button bg-red-200 text-red-700 hover:bg-red-300">-</button><span class="font-bold w-6 text-center text-gray-800">${item.quantity}</span><button onclick="updateQuantity('${item.name}', 1)" class="qty-button bg-green-200 text-green-700 hover:bg-green-300">+</button></div></td>
+                        <td class="p-2 text-right font-bold text-gray-800">${formatCurrency(item.price * item.quantity)}</td>
                     `;
                 });
             }
             
             const subtotal = currentCart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            let discountAmount = 0;
-            if (currentCart.discount.type === 'percent') {
-                discountAmount = subtotal * (currentCart.discount.value / 100);
-            } else {
-                discountAmount = currentCart.discount.value;
-            }
-            const total = subtotal - discountAmount;
-
-            document.getElementById('cart-subtotal').textContent = formatCurrency(subtotal);
-            const discountDisplay = document.getElementById('discount-display');
-            if (discountAmount > 0) {
-                document.getElementById('cart-discount-amount').textContent = `- ${formatCurrency(discountAmount)}`;
-                discountDisplay.classList.remove('hidden');
-            } else {
-                discountDisplay.classList.add('hidden');
-            }
-            document.getElementById('cart-total').textContent = formatCurrency(total);
+            document.getElementById('cart-total').textContent = formatCurrency(subtotal);
         }
 
         // --- DATA HANDLING LOGIC (OFFLINE) ---
@@ -604,8 +609,7 @@
             const newTransaction = {
                 id: data.counter,
                 items: currentCart.items,
-                discount: currentCart.discount,
-                total: parseFloat(document.getElementById('cart-total').textContent.replace(/[^0-9,-]+/g,"")),
+                total: currentCart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
                 timestamp: new Date().toISOString(),
                 cashier: loggedInUser.name,
                 paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
@@ -614,7 +618,7 @@
             };
             data.transactions.push(newTransaction);
             writeDataForBranch(branch, date, data);
-            currentCart = { items: [], discount: { type: 'nominal', value: 0 } };
+            currentCart = { items: [] };
             renderPosPage();
         }
         
@@ -730,17 +734,13 @@
         }
 
         window.openDiscountModal = () => {
-            document.getElementById('discount-modal-overlay').style.display = 'flex';
+            // This function is no longer used but kept for potential future use
         }
         window.closeDiscountModal = () => {
-            document.getElementById('discount-modal-overlay').style.display = 'none';
+            // This function is no longer used but kept for potential future use
         }
         window.applyDiscount = () => {
-            const type = document.getElementById('discount-type').value;
-            const value = parseFloat(document.getElementById('discount-value').value) || 0;
-            currentCart.discount = { type, value };
-            renderCart();
-            closeDiscountModal();
+            // This function is no longer used but kept for potential future use
         }
 
         window.resetDailyData = () => {
@@ -782,20 +782,9 @@
                 const row = itemsTable.insertRow();
                 row.innerHTML = `<td class="text-left" colspan="2">${item.name}</td><tr></tr><td class="text-left">${item.quantity}x ${formatCurrency(item.price)}</td><td class="text-right">${formatCurrency(item.quantity * item.price)}</td>`;
             });
-            const subtotal = trx.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            let discountAmount = 0;
-            if (trx.discount && trx.discount.type === 'percent') {
-                discountAmount = subtotal * (trx.discount.value / 100);
-            } else if (trx.discount) {
-                discountAmount = trx.discount.value;
-            }
-
+            
             const summaryDiv = document.getElementById('receipt-summary');
-            summaryDiv.innerHTML = `<div class="text-right">Subtotal: ${formatCurrency(subtotal)}</div>`;
-            if(discountAmount > 0) {
-                 summaryDiv.innerHTML += `<div class="text-right">Diskon: -${formatCurrency(discountAmount)}</div>`;
-            }
-            summaryDiv.innerHTML += `<div class="text-right font-bold">TOTAL: ${formatCurrency(trx.total)}</div>`;
+            summaryDiv.innerHTML = `<div class="text-right font-bold">TOTAL: ${formatCurrency(trx.total)}</div>`;
 
             const receiptElement = document.getElementById('receipt-template');
             receiptElement.style.display = 'block';
@@ -886,18 +875,11 @@
 
             let csvContent = "data:text/csv;charset=utf-8,";
             csvContent += "Laporan Transaksi\n";
-            csvContent += "ID,Waktu,Kasir,Metode,Item,Jumlah,Harga,Total Item,Diskon,Total Transaksi\n";
+            csvContent += "ID,Waktu,Kasir,Metode,Item,Jumlah,Harga,Total Item,Total Transaksi\n";
 
             transactions.forEach(trx => {
-                const subtotal = trx.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                let discountAmount = 0;
-                if (trx.discount && trx.discount.type === 'percent') {
-                    discountAmount = subtotal * (trx.discount.value / 100);
-                } else if (trx.discount) {
-                    discountAmount = trx.discount.value;
-                }
                 trx.items.forEach(item => {
-                    const row = [trx.id, new Date(trx.timestamp).toLocaleString('id-ID'), trx.cashier, trx.paymentMethod, `"${item.name}"`, item.quantity, item.price, item.quantity * item.price, discountAmount, trx.total];
+                    const row = [trx.id, new Date(trx.timestamp).toLocaleString('id-ID'), trx.cashier, trx.paymentMethod, `"${item.name}"`, item.quantity, item.price, item.quantity * item.price, trx.total];
                     csvContent += row.join(",") + "\n";
                 });
             });
@@ -917,7 +899,7 @@
             link.click();
             document.body.removeChild(link);
         }
-
+        
         window.getReportText = () => {
             const reportDate = document.getElementById('report-page-date')?.value || getTodayString();
             const branch = loggedInUser.branch === 'All' ? activeBranch : loggedInUser.branch;
@@ -988,6 +970,33 @@ Laporan ini dibuat otomatis dari FFC-OS.`;
             const mailtoUrl = `mailto:${ownerEmail}?subject=${encodeURIComponent(subject)}&body=${body}`;
             window.location.href = mailtoUrl;
         };
+
+        window.saveBranchSummary = () => {
+            const branch = document.getElementById('summary-branch-selector').value;
+            const date = document.getElementById('summary-date-input').value;
+            const revenue = parseFloat(document.getElementById('summary-revenue').value) || 0;
+            const expenses = parseFloat(document.getElementById('summary-expenses').value) || 0;
+            const trxCount = parseInt(document.getElementById('summary-trx-count').value) || 0;
+            const bestseller = document.getElementById('summary-bestseller').value || '-';
+
+            const summaryData = {
+                revenue,
+                expenses,
+                trxCount,
+                bestseller
+            };
+            localStorage.setItem(getStorageKey('summary', branch, date), JSON.stringify(summaryData));
+            alert(`Laporan untuk cabang ${branch} pada tanggal ${date} berhasil disimpan!`);
+            navigateTo('dashboard');
+        }
+
+        window.generateConsolidatedReportPDF = () => {
+            // Function to generate consolidated PDF report
+        }
+        
+        window.exportConsolidatedCSV = () => {
+            // Function to export consolidated CSV report
+        }
 
         // --- INITIALIZATION ---
         function initApp() {
