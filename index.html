@@ -76,7 +76,7 @@
         <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Laporan</h1><div class="card p-4"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-white">Laporan Harian</h2><div class="flex gap-2"><input type="date" id="report-page-date" class="p-2 border rounded-lg bg-gray-700 border-gray-600 text-white shadow-sm"><button onclick="generateShiftReport()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">PDF</button><button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">Excel</button></div></div><div class="border-t border-gray-700 mt-6 pt-4"><h2 class="text-xl font-bold text-white mb-4">Kirim Laporan ke Owner</h2><div class="flex gap-4"><button onclick="sendViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2"><span>WhatsApp</span></button><button onclick="sendViaEmail()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-lg text-sm flex items-center justify-center gap-2"><span>Email</span></button></div></div></div></div>
     </template>
     <template id="settings-page">
-        <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Pengaturan</h1><div class="card p-4"><h2 class="text-xl font-bold text-white mb-4">Kelola Menu, Harga & Stok</h2><div id="menu-management-list" class="space-y-4"></div><div class="mt-6 flex justify-end"><button onclick="saveMenuChanges()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold">Simpan Perubahan Menu</button></div></div><div class="card p-4"><h2 class="text-xl font-bold text-white mb-4">Tindakan Berbahaya</h2><button id="reset-data-btn" onclick="resetDailyData()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">Reset Data Hari Ini</button></div></div>
+        <div class="space-y-6"><h1 class="text-3xl font-bold text-white">Pengaturan</h1><div class="card p-4"><h2 class="text-xl font-bold text-white mb-4">Kelola Menu, Harga & Stok</h2><div id="menu-management-list" class="space-y-4"></div><div class="mt-6 flex justify-end"><button onclick="saveMenuChanges()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold">Simpan Perubahan Menu</button></div></div><div id="reset-card" class="card p-4"><h2 class="text-xl font-bold text-white mb-4">Tindakan Berbahaya</h2><button onclick="resetDailyData()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">Reset Data Hari Ini</button></div></div>
     </template>
     
     <!-- Modals and Templates -->
@@ -108,8 +108,8 @@
         let kdsInterval;
 
         const users = {
-            "siti": { password: "owner123", name: "Siti Fauziah", role: "owner", phone: "6285888593080", email: "owner@ffc.com" },
-            "aditya": { password: "owner123", name: "Aditya Farhan", role: "owner", phone: "6285888593080", email: "owner@ffc.com" },
+            "siti": { password: "owner123", name: "Siti Fauziah", role: "owner", branch: "All", phone: "6285888593080", email: "owner@ffc.com" },
+            "aditya": { password: "owner123", name: "Aditya Farhan", role: "owner", branch: "All", phone: "6285888593080", email: "owner@ffc.com" },
             "ratih": { password: "karyawan123", name: "Ratih", role: "karyawan", branch: "FFC Cabang 1" },
             "lita": { password: "karyawan123", name: "Lita", role: "karyawan", branch: "FFC Cabang 2" },
             "aura": { password: "karyawan123", name: "Aura", role: "karyawan", branch: "FFC Cabang 3" },
@@ -245,7 +245,7 @@
                 { id: 'pos', label: 'Kasir (POS)', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.51 0 .962-.328 1.099-.832l.345-1.609a2.25 2.25 0 00-2.218-2.553H6.608M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>', allowed: ['owner', 'karyawan'] },
                 { id: 'kds', label: 'Tampilan Dapur', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h7.5M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>', allowed: ['dapur'] },
                 { id: 'reports', label: 'Laporan', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>', allowed: ['owner', 'karyawan'] },
-                { id: 'settings', label: 'Pengaturan', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>', allowed: ['owner'] }
+                { id: 'settings', label: 'Pengaturan', icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>', allowed: ['owner', 'karyawan'] }
             ];
 
             navItems.forEach(item => {
@@ -760,9 +760,9 @@
             });
             const subtotal = trx.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             let discountAmount = 0;
-            if (trx.discount.type === 'percent') {
+            if (trx.discount && trx.discount.type === 'percent') {
                 discountAmount = subtotal * (trx.discount.value / 100);
-            } else {
+            } else if (trx.discount) {
                 discountAmount = trx.discount.value;
             }
 
@@ -867,9 +867,9 @@
             transactions.forEach(trx => {
                 const subtotal = trx.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                 let discountAmount = 0;
-                if (trx.discount.type === 'percent') {
+                if (trx.discount && trx.discount.type === 'percent') {
                     discountAmount = subtotal * (trx.discount.value / 100);
-                } else {
+                } else if (trx.discount) {
                     discountAmount = trx.discount.value;
                 }
                 trx.items.forEach(item => {
